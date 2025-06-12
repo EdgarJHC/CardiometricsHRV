@@ -1,0 +1,25 @@
+
+
+html, body {
+    height: 100%; /* Asegura que ocupen toda la altura */
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column; /* Organiza los hijos en una columna */
+    justify-content: space-between; /* Acomoda contenido y footer */
+    min-height: 100%; /* Asegura el 100% de altura total */
+}
+
+.footer {
+    background-color: #191a24; /* Fondo oscuro */
+    color: #ffffff; /* Texto blanco */
+    text-align: center; /* Centra el texto */
+    padding: 20px; /* Espaciado interno */
+    font-size: 14px; /* Tamaño de fuente */
+    width: 100%; /* Ocupa todo el ancho */
+    margin-top: auto; /* Empuja al final si no hay suficiente contenido */
+    position: relative; /* Asegura que no interfiera con otros elementos */
+    bottom: 0; /* Fija al fondo del flujo del contenido */
+}

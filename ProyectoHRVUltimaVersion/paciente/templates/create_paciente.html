@@ -1,0 +1,166 @@
+{% extends 'base.html' %}  
+
+{% block content %}  
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/stylesCreate_Paciente.css' %}">
+
+<style>
+
+  body {
+    font-family: 'Arial', sans-serif; /* Fuente del documento */
+    margin: 0; /* Sin márgenes en el cuerpo */
+    padding: 0; /* Sin padding en el cuerpo */
+    height: 100vh; /* Asegura que el cuerpo tenga el 100% de altura */
+    background: url("{% static 'img/medicina.jpg' %}") no-repeat center center fixed;
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que se repita la imagen */
+    position: relative; /* Necesario para otros elementos dentro de la página */
+    min-height: 100%; /* Asegura que el fondo cubra toda la altura */
+}
+
+
+</style>
+
+<h1>Crear nuevo registro</h1>  
+{{ error }}  
+
+<form action="/create_paciente/" method="POST">  
+  {% csrf_token %}  
+
+  <!-- Nombre(s) -->
+  <div class="form-group">
+    <label for="nombres">Nombre(s):</label>
+    <input type="text" class="form-control" id="nombre_paciente" name="nombre_paciente" placeholder="Ingresa tu(s) nombre(s)" required>
+  </div>
+
+  <!-- Apellido Paterno -->
+  <div class="form-group">
+    <label for="apellido_paterno">Apellido Paterno:</label>
+    <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" placeholder="Ingresa tu apellido paterno" required>
+  </div>
+
+  <!-- Apellido Materno -->
+  <div class="form-group">
+    <label for="apellido_materno">Apellido Materno:</label>
+    <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" placeholder="Ingresa tu apellido materno" required>
+  </div>
+
+  <!-- Género -->
+  <div class="form-group">
+    <label for="sexo">Género:</label>
+    <select class="form-control" id="sexo" name="sexo" required>
+        <option value="">Seleccione su género</option>
+        <option value="masculino">Masculino</option>
+        <option value="femenino">Femenino</option>
+    </select>
+  </div>
+
+
+  <!-- Medicamentos (campo de texto en lugar de opciones) -->
+  <div class="form-group">
+    <label for="medicamentos">Uso de medicamentos:</label>
+    <input type="text" class="form-control" id="medicamentos" name="uso_de_medicamentos" placeholder="Escriba si existe un uso de medicamentos o describa cuales" >
+  </div>
+
+
+  <!-- Actividad Física (solo se puede seleccionar una opción) -->
+  <div class="form-group">
+    <label>Realiza actividad física:</label><br>
+    <div class="checkbox-container">
+      <label class="checkbox-label">
+        <input type="checkbox" id="actividad_nula" name="actividad_fisica" value="nulo">
+        <span class="checkmark"></span>
+        Nulo
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="actividad_ligera" name="actividad_fisica" value="ligera">
+        <span class="checkmark"></span>
+        Intensidad ligera
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="actividad_moderada" name="actividad_fisica" value="moderada">
+        <span class="checkmark"></span>
+        Intensidad moderada
+      </label>
+      <label class="checkbox-label">
+        <input type="checkbox" id="actividad_vigorosa" name="actividad_fisica" value="vigorosa">
+        <span class="checkmark"></span>
+        Intensidad vigorosa
+      </label>
+    </div>
+  </div>
+
+
+  <script>
+    // JavaScript para asegurarse que solo una opción esté seleccionada
+    const checkboxes = document.querySelectorAll('input[type="checkbox"][name="actividad_fisica"]');
+    
+    checkboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', () => {
+        // Si se selecciona una casilla, desmarcar las demás
+        checkboxes.forEach(otherCheckbox => {
+          if (otherCheckbox !== checkbox) {
+            otherCheckbox.checked = false;
+          }
+        });
+      });
+    });
+  </script>
+
+
+ <!-- Teléfono -->
+ <div class="form-group">
+  <label for="telefono">Teléfono:</label>
+  <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Ingresa tu número de teléfono" maxlength="10" pattern="\d{10}">
+  <small id="telefonoHelp" class="form-text text-muted">
+    El número debe tener exactamente 10 dígitos y ser numérico.
+  </small>
+</div>
+
+ <!-- Correo Electrónico -->
+  <div class="form-group">
+    <label for="correo">Correo Electrónico:</label>
+    <input type="email" class="form-control" id="correo" name="correo" placeholder="Ingresa tu correo electrónico" required>
+    <small id="emailHelp" class="form-text text-muted">
+      El correo debe contener un `@` y ser un dominio permitido como gmail.com, yahoo.com, outlook.com o .gob
+    </small>
+    <div id="emailError" style="color: red; display: none;">
+      <small>Por favor, ingresa un correo electrónico válido.</small>
+    </div>
+  </div>
+
+  <script>
+    // Validación del correo electrónico
+    document.getElementById("correo").addEventListener("blur", function() {
+      const email = this.value;
+      const regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|yahoo\.com|gob\.mx|hotmal\.com)$/;
+      const emailError = document.getElementById("emailError");
+  
+      if (!regex.test(email)) {
+        emailError.style.display = "block";
+      } else {
+        emailError.style.display = "none";
+      }
+    });
+  </script>
+
+  <!-- Fecha de nacimiento -->
+  <div class="form-group">
+    <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+    <input type="date" class="form-control" id="fecha_nacimiento" name="fecha_nacimiento" required>
+  </div>
+
+  <!-- IMC -->
+  <div class="form-group">
+    <label for="imc">IMC:</label>
+    <input type="number" class="form-control" id="imc" name="imc" placeholder="Ingrese el Indice de Masa Corporal" required min="10" max="60">
+    <small id="imcHelp" class="form-text text-muted">
+      Ingrese un valor de indice corporal con respecto al estándar establecido de la OMS (Organización Mundial de la salud)
+    </small>
+  </div>
+
+  <button type="submit" class="btn">Guardar</button>  
+</form>
+
+{% endblock %}

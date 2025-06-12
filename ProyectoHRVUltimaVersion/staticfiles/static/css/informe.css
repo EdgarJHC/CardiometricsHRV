@@ -1,0 +1,41 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilo de las tablas */
+table {
+    width: 50%;
+    margin: 20px auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Estilo de los encabezados */
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* Estilo de las secciones */
+section {
+    margin-bottom: 30px;
+}
+
+
+/* Imágenes */
+img {
+    border-radius: 5px;
+}

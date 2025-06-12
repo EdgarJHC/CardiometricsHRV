@@ -1,0 +1,195 @@
+/* stylesCreate_Paciente.css */
+
+/* Estilo básico para el cuerpo del documento */
+body {
+    font-family: 'Arial', sans-serif; /* Fuente del documento */
+    margin: 0; /* Sin márgenes en el cuerpo */
+    padding: 0; /* Sin padding en el cuerpo */
+    height: 100vh; /* Asegura que el cuerpo tenga el 100% de altura */
+    background: url("{% static 'img/medicina.jpg' %}") no-repeat center center fixed;
+    background-size: cover; /* Asegura que la imagen cubra toda la pantalla */
+    background-position: center; /* Centra la imagen */
+    background-repeat: no-repeat; /* Evita que se repita la imagen */
+    position: relative; /* Necesario para otros elementos dentro de la página */
+    min-height: 100%; /* Asegura que el fondo cubra toda la altura */
+}
+
+
+
+
+
+
+/* Contenedor del formulario */
+form {
+    max-width: 800px; /* Ancho máximo del formulario */
+    margin: 40px auto ; /* Centra el formulario horizontalmente */
+    padding: 30px; /* Espaciado interno del formulario */
+    background-color: #ffffff; /* Fondo blanco para el formulario */
+    border-radius: 20px; /* Bordes redondeados */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+
+
+/* Estilo para el título */
+h1 {
+    text-align: center;
+    color: #ffffff;
+    font-weight: bold;
+    margin-bottom: 100px;
+    margin-top: 80px;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+
+    /* Sombra */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombra gris oscuro */
+
+    /* Delineado */
+ 
+    padding: 10px; /* Espaciado alrededor del texto para el borde */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+
+
+/* Estilo para los grupos de formulario */
+.form-group {
+    margin-bottom: 20px; /* Espaciado entre los grupos de formularios */
+}
+
+/* Estilo para las etiquetas */
+label {
+    display: block; /* Hace que la etiqueta ocupe toda la línea */
+    margin-bottom: 8px; /* Margen inferior de las etiquetas */
+    font-weight: 600; /* Texto en negrita para las etiquetas */
+    color: #495057; /* Color del texto de las etiquetas */
+}
+
+/* Estilo para los campos de entrada */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+input[type="password"] {
+    width: 100%; /* Hace que los campos de entrada ocupen todo el ancho disponible */
+    padding: 12px; /* Espaciado interno */
+    border: 1px solid #ced4da; /* Borde gris claro */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: border-color 0.3s, box-shadow 0.3s; /* Transición suave para el color del borde y sombra */
+}
+
+/* Estilo para los campos de entrada al tener el foco */
+input:focus {
+    border-color: #80bdff; /* Color de borde al tener el foco */
+    box-shadow: 0 0 5px rgba(128, 189, 255, 0.5); /* Sombra al enfocar el campo */
+    outline: none; /* Sin borde exterior al tener el foco */
+}
+
+/* Estilo para el botón */
+.btn {
+    padding: 12px 15px; /* Espaciado interno del botón */
+    width: auto; /* Hace que el botón ocupe todo el ancho disponible */
+    background-color: #007bff; /* Color de fondo del botón */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    margin: 30px auto ;
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cursor en forma de mano al pasar sobre el botón */
+    transition: background-color 0.3s, transform 0.2s; /* Transición suave para el color de fondo */
+}
+
+/* Estilo para el botón al pasar el ratón */
+.btn:hover {
+    background-color: #0056b3; /* Color más oscuro al pasar el ratón */
+    transform: translateY(-2px); /* Eleva ligeramente el botón al pasar el ratón */
+}
+
+/* Estilo para mensajes de error */
+.error {
+    color: red; /* Color del texto de error */
+    margin: 10px 0; /* Margen vertical */
+    text-align: center; /* Centra el mensaje de error */
+    font-weight: bold; /* Texto en negrita para mensajes de error */
+}
+
+
+/* Estilos para los checkboxes */
+.checkbox-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .checkbox-label {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    padding-left: 30px;
+    transition: color 0.3s ease;
+  }
+
+  /* Estilo para el cuadrado del checkbox */
+  .checkbox-label input[type="checkbox"] {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0; /* Ocultamos el checkbox original */
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+  }
+
+  .checkbox-label input[type="checkbox"] + .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background-color: #4CAF50;
+    animation: checkbox-checked 0.3s ease-in-out;
+  }
+
+  /* Animación al marcar */
+  @keyframes checkbox-checked {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  .checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✔';
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 14px;
+    color: white;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Hover effect */
+  .checkbox-label:hover {
+    color: #4CAF50;
+  }

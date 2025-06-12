@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<script src="{% static 'js/opciones_doctor.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'css/homeDoctor.css' %}">
+<div class="container">
+
+    <style>
+        .container {
+            font-family: 'Times New Roman', Times, serif;
+            max-width: 100%;     /* Permite que se expanda completamente */
+            height: 800px;       /* Establece la altura del contenedor */
+            padding: 200px;       /* Espacio interno opcional */
+            box-sizing: border-box; /* Incluye el padding dentro del ancho y la altura */
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url("{% static 'img/home_Doctor.jpg' %}") no-repeat center center fixed;
+                        background-size: cover;
+                        background-position: center; /* Centra la imagen */
+                        background-repeat: no-repeat; /* Evita que se repita */
+            animation: fadeIn 1s ease-in-out;  /* Aplica la animación de desvanecimiento */
+        }
+        
+      </style>
+
+
+
+<h1>CardioMetricsHRV </h1>
+
+
+
+<H2 > Bienvenido {{ especialista.apellido_paterno }} {{ especialista.apellido_materno }} {{ especialista.nombre_especialista }}</H2>
+
+
+</div>
+
+
+
+
+
+
+<!-- Sección de opciones -->
+<div class="text">
+    <label for="Informacion">Información</label>
+
+
+
+<div class="option-row">
+    <div class="option-container" onclick="toggleContent('option1')">
+        <h3>¿Qué es CardioMetrics?</h3>
+        <div id="option1" class="option-content">
+            <p>Es una aplicación web que permite analizar y evaluar la salud cardiovascular por medio del fénomeno de la Varibilidad de la Frecuencia Cardiaca.</p>
+        </div>
+    </div>
+
+    <div class="option-container" onclick="toggleContent('option2')">
+        <h3>¿Qué es la VFC?</h3>
+        <div id="option2" class="option-content">
+            <p>Es un fénomeno que refleja el equilibrio del Sistema Nervioso Autonomo (SNA )y su interacción con la salud cardiovascular.</p>
+        </div>
+    </div>
+
+    <div class="option-container" onclick="toggleContent('option3')">
+        <h3>Formatos de archivos digitales admitidos</h3>
+        <div id="option3" class="option-content">
+            <p>La aplicación admite archivos digitales sin encabezado en formato: </p>
+            <li><strong>CSV (Comma-Separated Values) </strong></li>
+            <li><strong>TXT (Archivo de texto)</strong></li>
+            <li><strong>Con separadores de datos tales como [| , | \t | " " | y | ; |]</strong></li>
+        </div>
+    </div>
+
+    <div class="option-container" onclick="toggleContent('option4')">
+        <h3>Contenido de los informes</h3>
+        <div id="option4" class="option-content">
+            <p>Los informes contienen información sobre un analisis en el dominio del tiempo y de la frecuencia.</p>
+        </div>
+    </div>
+</div>
+
+</div>
+
+
+
+{% endblock %}

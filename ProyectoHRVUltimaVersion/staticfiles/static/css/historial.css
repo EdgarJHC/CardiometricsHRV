@@ -1,0 +1,41 @@
+/* Estilo para el loader */
+.loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Asegura que el loader esté por encima de otros elementos */
+}
+
+.loader-content {
+    text-align: center;
+    color: white;
+}
+
+.progress-bar-container {
+    width: 500px;  /* Aumentamos el tamaño de la barra (90% de ancho) */
+    height: 30px;
+    background-color: #ddd;
+    margin-top: 20px;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0%;  /* Inicialmente, la barra estará vacía */
+    background-color: #03ff10;  /* Color de la barra */
+    border-radius: 5px;
+    transition: width 0.1s linear;
+}
+
+.loader p {
+    font-size: 18px;
+    margin-top: 10px;
+    font-weight: bold;
+}

@@ -1,0 +1,266 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000000;
+}
+
+
+header{
+    background-color: #8dafe2;
+    padding: 10px;
+}
+    
+title{
+    font-size: 24px;
+    font-weight: bold;
+    
+    
+}
+
+    /* Estilo para el main content */
+main {
+        padding: 20px;
+    }
+
+section {
+        margin-bottom: 30px;
+    }
+
+
+
+/* Container */
+.container {
+    width: auto;
+    margin: 20px auto;
+    background-color: rgb(255, 255, 255);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Header styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+}
+
+.header .title {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.header .file-info,
+.header .page-number {
+    font-size: 14px;
+    color: #666;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #0030ff;
+}
+
+/* Graph container */
+.graph-container {
+    margin: 20px 0;
+    padding: 30px;
+    border: 1px solid #ddd;
+    background-color: #dddee0;
+ 
+    width: auto;
+    height: auto;
+}
+
+.graph-section{
+ 
+    width: auto;
+    align-items: center;
+
+}
+
+
+.tacograma{
+    max-width: auto;
+}
+
+
+/* Form styles */
+.form-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.form-label {
+    font-size: 14px;
+    color: #333;
+}
+
+.form-input {
+    width: 100px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-button {
+    background-color: #3f54a3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-button:hover {
+    background-color: darkblue;
+}
+
+/* Table styles */
+.results-section table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+}
+
+.results-section th, .results-section td {
+    border: 1px solid #e1dbdb;
+    padding: 8px;
+    text-align: left;
+}
+
+.results-section th {
+    background-color: #3f54a3;
+    color: #ffffff;
+}
+
+
+
+
+/* Histogram section */
+.distributions {
+    margin: 20px 0;
+}
+
+.histograms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0px;
+}
+
+.histograms .graph-section {
+    flex: 1 1 calc(50% - 20px);
+}
+
+.histograms .graph-container {
+    height: 500px;
+    width: 600px;
+   
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .form-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .histograms .graph-section {
+        flex: 1 1 100%;
+    }
+}
+
+    .frequency-table th{
+    width: 2%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+
+
+.full-width-table th, .full-width-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    /* Estilo para las tablas */
+.full-width-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    /* Asegura que las tablas ocupen el ancho total disponible */
+.full-width-table td {
+        word-wrap: break-word;
+    }
+
+table th{
+    background-color: #3f54a3;
+    color: white;
+}
+
+/* Estilo base para las filas de la tabla */
+table tr {
+    text-align: center;
+    transition: all 0.3s ease-in-out; /* Transición suave para el efecto */
+}
+
+/* Efecto al pasar el mouse por una fila */
+table tr:hover {
+    transform: scale(1.05); /* Aumenta el tamaño de la fila ligeramente */
+    background-color: #b4dcff; /* Cambia el color de fondo de la fila */
+}
+
+/* Estilo base para los botones y otros elementos */
+.form-container .no-pdf {
+    display: block; /* Se muestran normalmente en el navegador */
+}
+
+/* Cuando se genera el PDF, los botones y elementos con clase "no-pdf" se ocultarán */
+.pdf-mode .no-pdf {
+    display: none; /* Oculta los botones y la leyenda del PDF cuando se está generando el PDF */
+}
+
+/* Asegurarse de que los gráficos, tablas e imágenes sean visibles en el PDF */
+.pdf-mode .graph-container,
+.pdf-mode .graph-section
+.pdf-mode .results-section table,
+.pdf-mode img {
+    display: block; /* Asegura que los gráficos, tablas y las imágenes se muestren en el PDF */
+}
+
+
+
+
+    /* Imprimir */
+@media print {
+        button {
+            display: none;
+        }
+
+        body {
+            font-size: 12px;
+        }
+
+        .header {
+            margin-bottom: 10px;
+        }
+    }
+
+
+button{
+    background-color: #3f54a3;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+}

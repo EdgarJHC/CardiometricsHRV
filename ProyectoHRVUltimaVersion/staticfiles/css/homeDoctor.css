@@ -1,0 +1,118 @@
+.container {
+    font-family: 'Times New Roman', Times, serif;
+    max-width: 100%;     /* Permite que se expanda completamente */
+    height: 800px;       /* Establece la altura del contenedor */
+    padding: 200px;       /* Espacio interno opcional */
+    box-sizing: border-box; /* Incluye el padding dentro del ancho y la altura */
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                url("{% static 'img/home_Doctor.jpg' %}") no-repeat center center fixed;
+                background-size: cover;
+                background-position: center; /* Centra la imagen */
+                background-repeat: no-repeat; /* Evita que se repita */
+    animation: fadeIn 1s ease-in-out;  /* Aplica la animación de desvanecimiento */
+}
+
+/* Definir la animación */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;   /* Al inicio está completamente invisible */
+    }
+    100% {
+        opacity: 1;   /* Al final se vuelve completamente visible */
+    }
+}
+
+
+h1{
+    color: #ffffff;
+    font-size: 80px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 100px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombra gris oscuro */
+
+    /* Delineado */
+ 
+    padding: 10px; /* Espaciado alrededor del texto para el borde */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+
+H2{
+    color: #ffbb00;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 100px; 
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombra gris oscuro */
+
+    /* Delineado */
+ 
+    padding: 10px; /* Espaciado alrededor del texto para el borde */
+    border-radius: 5px; /* Bordes redondeados */ 
+}
+
+
+
+label {
+    text-decoration: underline; /* Subraya el texto */
+    text-decoration-color: #ffbb00; /* Cambia el color del subrayado */
+    text-underline-offset: 15px; /* Ajusta la distancia entre el texto y el subrayado */
+    margin-bottom: 80px;
+}
+
+
+
+.text{
+    color: #080600;
+    margin-bottom: 80px;
+    font-size: 40px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 100px;  
+    animation: fadeIn 2s ease-in-out;  /* Aplica la animación de desvanecimiento */
+}
+/* Definir la animación */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;   /* Al inicio está completamente invisible */
+    }
+    100% {
+        opacity: 1;   /* Al final se vuelve completamente visible */
+    }
+}
+.option-row {
+    display: flex;
+    grid-template-columns: repeat(1, 1fr);  /* Crear 1 columna */
+    gap: 20px;  /* Espacio entre cada contenedor */
+    justify-items: center;  /* Centra los elementos horizontalmente */
+    align-items: center;  /* Centra los elementos verticalmente */
+}
+.option-container {
+    width: 800px;  /* Establece la anchura de 300px */
+    margin: 20px;
+    background-color: #a7e0e0;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* Sombras más pequeñas */
+    font-size: 14px;  /* Fuente más pequeña */
+}
+.option-container:hover {
+    background-color: #0a8181;  /* Color al pasar el mouse */
+    box-shadow: 0 2px 5px #000000;  /* Aumenta ligeramente la sombra al pasar el mouse */
+}
+.option-content {
+    max-height: 0;  /* Comienza con una altura de cero */
+    opacity: 0;  /* Comienza invisible */
+    overflow: hidden;  /* No muestra el contenido fuera de la caja */
+    padding: 0 10px;  /* Sin padding adicional */
+    background-color: #0a8181;
+    border-radius: 5px;
+    margin-top: 5px;
+    transition: max-height 1s ease, opacity 1s ease;  /* Transición suave para altura y opacidad */
+}
+/* Despliegue automático al pasar el mouse */
+.option-container:hover .option-content {
+    max-height: 100px;  /* Ajusta este valor según el contenido */
+    opacity: 1;  /* Hace visible el contenido */
+}

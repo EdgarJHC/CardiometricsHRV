@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<!-- Incluye las librerías de JavaScript necesarias para los gráficos, si es necesario -->
+<body>
+  <h1 style="text-align: center;">Informe de Variabilidad de la Frecuencia Cardiaca</h1>
+
+  <!-- Datos del Especialista -->
+  <section>
+      <h2 style="text-align: center;">Datos del Especialista</h2>
+      <table>
+          <tr>
+              <th>Campo</th>
+              <th>Detalle</th>
+          </tr>
+          <tr>
+              <td>Nombre</td>
+              <td>{{ especialista.nombre_especialista }} {{ especialista.apellido_paterno }} {{ especialista.apellido_materno }}</td>
+          </tr>
+          <tr>
+              <td>Especialidad</td>
+              <td>{{ especialista.especialidad }}</td>
+          </tr>
+          <tr>
+              <td>Teléfono</td>
+              <td>{{ especialista.telefono }}</td>
+          </tr>
+          <tr>
+              <td>Correo</td>
+              <td>{{ especialista.correo }}</td>
+          </tr>
+      </table>
+  </section>
+
+  <!-- Datos del Paciente -->
+  <section>
+      <h2 style="text-align: center;">Datos del Paciente</h2>
+      <table>
+          <tr>
+              <th>Campo</th>
+              <th>Detalle</th>
+          </tr>
+          <tr>
+              <td>Nombre</td>
+              <td>{{ paciente.nombre_paciente }} {{ paciente.apellido_paterno }} {{ paciente.apellido_materno }}</td>
+          </tr>
+          <tr>
+              <td>Sexo</td>
+              <td>{{ paciente.sexo }}</td>
+          </tr>
+          <tr>
+              <td>Fecha de Nacimiento</td>
+              <td>{{ paciente.fecha_nacimiento }}</td>
+          </tr>
+          <tr>
+              <td>Teléfono</td>
+              <td>{{ paciente.telefono }}</td>
+          </tr>
+          <tr>
+              <td>Correo</td>
+              <td>{{ paciente.correo }}</td>
+          </tr>
+      </table>
+  </section>
+
+  
+</body>
+
+<!-- Regresar a la lista de pacientes -->
+<a href="{% url 'pacientes' %}" class="btn btn-primary">Regresar a la lista de pacientes</a>
+
+</body>
+{% endblock %}

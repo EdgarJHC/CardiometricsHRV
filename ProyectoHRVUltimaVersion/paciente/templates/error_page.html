@@ -1,0 +1,14 @@
+{% extends 'base.html' %}  <!-- Extiende la plantilla base.html para reutilizar su estructura y estilo -->
+
+{% block content %}  <!-- Inicia el bloque de contenido que se insertará en la plantilla base -->
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+</head>
+<body>
+    <h1>Error</h1>
+    <p>Lo sentimos, no hemos encontrado lo que está buscando.</p>
+    <a href="{% url 'home' %}">Volver a la página principal</a>  <!-- Asegúrate de tener una vista 'home' -->
+</body>
+
+{% endblock %}

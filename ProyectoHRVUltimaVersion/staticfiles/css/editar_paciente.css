@@ -1,0 +1,232 @@
+/* Estilo general para el cuerpo */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+                url("{% static 'img/medicina.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    animation: fadeIn 1.5s ease-out; /* Animación de desvanecimiento */
+
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    max-height: 100%; /* Usar toda la altura visible */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow: hidden; /* Evitar scroll */
+    animation: slideIn 1s ease-out;
+    text-align: left;
+    color: #ffffff;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+
+    /* Sombra */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra gris oscuro */
+
+    /* Delineado */
+ 
+    padding: 10px; /* Espaciado alrededor del texto para el borde */
+    border-radius: 5px; /* Bordes redondeados */
+    margin-bottom: 38px;
+}
+
+/* Animación de entrada del contenedor */
+@keyframes slideIn {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Estilo para la tarjeta */
+.card {
+    border-radius: 15px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 800px; /* Limitar el ancho máximo */
+    overflow: hidden; /* Evitar desbordes en la tarjeta */
+    animation: cardAppear 1.2s ease-out;
+    display: flex;
+
+
+    
+}
+
+/* Animación para la tarjeta */
+@keyframes cardAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Encabezado de la tarjeta */
+.card-header {
+    background-color: #007bff00;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 15px 15px 0 0;
+    animation: bounceIn 0.8s ease-out;
+    color: #ffffff;
+    font-weight: bold;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+
+    /* Sombra */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7); /* Sombra gris oscuro */
+
+    /* Delineado */
+ 
+   margin: 50px;
+    border-radius: 5px; /* Bordes redondeados */
+
+}
+
+/* Animación para el encabezado */
+@keyframes bounceIn {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Título de la tarjeta */
+.card-body h4 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+/* Estilo para los campos de formulario */
+form .form-group {
+    margin-bottom: 20px;
+    animation: fieldAnimation 1s ease-out;
+}
+
+/* Animación de los campos */
+@keyframes fieldAnimation {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Estilos para las etiquetas de los campos */
+label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+}
+
+/* Estilo para los campos de entrada */
+input[type="text"],
+input[type="email"],
+input[type="tel"],
+input[type="date"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    height: 50px;
+}
+
+/* Efecto de enfoque en los campos de entrada */
+input:focus, 
+select:focus, 
+textarea:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Estilo para el botón de guardar */
+.btn-submit {
+    padding: 12px 40px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 20px;
+}
+
+/* Efecto hover para el botón */
+.btn-submit:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+}
+
+/* Estilo para el pie de la tarjeta */
+.card-footer {
+    background-color: #f8f9fa;
+    color: #000000;
+    font-size: 0.875rem;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Estilo para el mensaje de responsabilidad */
+.card-footer .text-muted {
+    font-style: italic;
+    opacity: 0.8;
+}
+
+/* Scroll dentro de la tarjeta */
+.card-body {
+    max-height:600px; /* Ajusta según el tamaño del formulario */
+    overflow-y: auto; /* Habilita el scroll solo si es necesario */
+    padding: 15px;
+}
+
+
+
+
+     

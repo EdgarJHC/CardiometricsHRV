@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/stylesPerfilEspecialista.css' %}">
+
+<div class="card-header">
+    <h1>Perfil del Especialista</h1>
+    <h3>{{ nombre_especialista }} {{ apellido_paterno }} {{ apellido_materno }}</h3>
+</div>
+
+
+<!-- Contenedor del perfil -->
+<div class="container perfil-container mt-5">
+    
+    
+    {% if error %}  <!-- Verifica si hay un error -->
+    <div class="alert alert-danger">{{ error }}</div>  <!-- Muestra un mensaje de error en un div de alerta -->
+    {% endif %}
+    
+     <!-- Tabla de información -->
+     <div class="table-responsive">
+        <table class="table table-bordered table-hover mt-4">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Campo</th>
+                    <th>Información</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Nombre</strong></td>
+                    <td>{{ nombre_especialista }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Apellido Paterno</strong></td>
+                    <td>{{ apellido_paterno }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Apellido Materno</strong></td>
+                    <td>{{ apellido_materno }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Fecha de nacimiento</strong></td>
+                    <td>{{ fecha_nacimiento }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Departamento</strong></td>
+                    <td>{{ departamento }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Usuario</strong></td>
+                    <td>{{ username }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

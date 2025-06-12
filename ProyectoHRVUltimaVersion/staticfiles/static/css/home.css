@@ -1,0 +1,159 @@
+/* Estilo global */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Hero Section */
+.hero-section {
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    padding: 80px 0;
+    opacity: 0;  /* Comienza oculto */
+    animation: fadeIn 2s ease-out forwards;  /* Aparece con animación */
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+    animation: slideUp 1s ease-out forwards;  /* Título entra desde abajo */
+}
+
+.hero-section p {
+    font-size: 1.25rem;
+    max-width: 800px;
+    margin: 0 auto;
+    opacity: 0;
+    animation: fadeIn 2s 0.5s ease-out forwards;  /* Descripción aparece con retraso */
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+/* Animación de deslizamiento hacia arriba */
+@keyframes slideUp {
+    0% {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Content Section */
+.container.content {
+    padding: 60px 15px;
+    animation: fadeIn 2s 1s ease-out forwards;  /* Se desliza hacia abajo con animación */
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Card */
+.card {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    opacity: 0;  /* Comienza oculta */
+    transform: translateY(50px);  /* Comienza desplazada hacia abajo */
+    animation: cardAnimation 0.6s ease-out forwards;  /* Animación para las tarjetas */
+    transition: transform 0.3s ease-in-out;  /* Transición suave cuando se pasa el ratón */
+}
+
+.card-img-top {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 15px;
+}
+
+.card-text {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+/* Animación para las tarjetas */
+@keyframes cardAnimation {
+    0% {
+        transform: translateY(50px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Botones */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;  
+    transform: scale(1);  /* Escala inicial */
+    animation: buttonHoverEffect 0.5s ease-out forwards;  /* Animación de los botones */
+}
+
+/* Efecto al pasar el ratón sobre el botón */
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+    transform: scale(1.1);  /* Aumenta el tamaño del botón */
+}
+
+@keyframes buttonHoverEffect {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .col-md-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}

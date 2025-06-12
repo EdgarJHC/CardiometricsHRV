@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+
+
+<div class="card">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/historial.css' %}">
+    <div class="card-header">
+        <form class="form-inline" method="GET" action="{% url 'pacientes' %}">
+            <input class="form-control mr-sm-2" type="text" placeholder="Buscar informe" name="query" aria-label="Buscar homoclave" style="width: 900px;">
+            <button class="btn btn-primary" type="text" style="background-color: #004b69; color: white;">Buscar</button>
+        </form>
+        <hr>
+        <a class="btn" href="{% url 'crear_informe' paciente.id_paciente %}" role="button" style="background-color: #182995; color: white;">Crear nuevo informe</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Informes</h4>
+        
+
+        {% if no_registros %}
+        <div class="alert alert-warning" role="alert">
+            No se han encontrado registros de ECG para este paciente.
+        </div>
+        {% else %}
+        <table class="table" style="width: 80%; height: auto; margin: 0 auto;">
+            <thead>
+                <tr>
+                    <th>Homoclave</th>
+                    <th>Fecha del informe</th>
+                    <th>Comentarios</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                {% for registro in registros_ecg %}
+                <tr>
+                    <td>{{ registro.homoclave }}</td>
+                    <td>{{ registro.fecha_informe|date:"d M Y" }}</td>
+                    <td>{{ registro.comentarios }}</td>
+                    <td>
+                        <div style="display: flex; gap: 15px; justify-content: center; align-items: center; padding: 5px;">
+                            <!-- Botón para ver informe completo -->
+                            <a class="btn btn-info" href="{% url 'ver_grafico' registro.id_ecg %}" role="button" style="background-color: #1a5edd; color: white;">Informe completo</a>
+                            <!-- Botón para eliminar informe -->
+                            <a class="btn btn-danger" href="{% url 'eliminar_informe' registro.id_ecg %}" onclick="return confirm('¿Estás seguro de eliminar el informe?')" role="button" style="background-color: #de4444; color: white;">Borrar</a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" style="text-align: center;">No hay registros disponibles.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+</div>
+
+
+<!-- Loader -->
+<div id="loader" class="loader" style="display: none;">
+    <div class="loader-content">
+        <p id="loader-message">Cargando...</p>
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Función que muestra el loader
+    function showLoader() {
+        document.getElementById("loader").style.display = "flex";  // Muestra el loader
+        var progressBar = document.getElementById("progress-bar");
+        var width = 0;
+        
+        // Aseguramos que la barra esté visible desde el principio (al empezar la carga)
+      
+        progressBar.style.width = width + '%';
+        
+        // Función que incrementa la barra de progreso
+        var interval = setInterval(function() {
+            if (width >= 100) {
+                clearInterval(interval);  // Detenemos el intervalo cuando la barra llega al 100%
+                document.getElementById("loader-message").textContent = "El informe está listo, redirigiendo...";  // Actualizamos el mensaje
+                setTimeout(function() {
+                    window.location.href = currentHref;  // Redirige después de 1 segundo
+                }, 1000);  // Ajusta el tiempo de redirección (en milisegundos)
+            } else {
+                width++;  // Aumentamos el ancho de la barra
+                progressBar.style.width = width + '%';  // Actualizamos el ancho de la barra
+            }
+        }, 1);  // Ajusta el tiempo de cada incremento (milisegundos)
+    }
+
+    // Variable para almacenar la URL del informe completo
+    var currentHref;
+
+    // Función para redirigir al informe completo después de un pequeño retraso
+    function redirectAfterLoading(button) {
+        currentHref = button.href;  // Guardamos la URL del informe
+        showLoader();  // Muestra el loader al hacer clic
+    }
+
+    // Evento de clic en el botón "Informe completo"
+    document.querySelectorAll('a.btn-info').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();  // Prevenir la redirección automática
+            redirectAfterLoading(button);  // Redirige después de 1 segundo
+        });
+    });
+</script>
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% load static %}
+ <!-- Enlace al favicon -->
+ <link rel="stylesheet" type="text/css" href="{% static 'css/barra_nav.css' %}">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">
+      
+   
+    <img src="{% static 'img/logo.png' %}" alt="logo" style="height: 50px; width: auto;">
+
+    </a>
+
+    <button 
+      class="navbar-toggler" 
+      type="button" 
+      data-bs-toggle="collapse" 
+      data-bs-target="#navbarNav" 
+      aria-controls="navbarNav" 
+      aria-expanded="false" 
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        
+       
+
+
+        {% if user.is_authenticated %}
+        <li class="nav-item">
+          <a href="{% url 'homeDoctor' %}" class="nav-link">Inicio</a>
+        </li>
+
+        <li class="nav-item">
+          <a href="{% url 'pacientes' %}" class="nav-link">Pacientes</a>
+        </li>
+
+
+        <!-- Menú de Perfil -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="perfilDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Perfil
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="perfilDropdown">
+            <li><a class="dropdown-item" href="{% url 'perfilEspecialista' %}">Ver Perfil</a></li>  <!-- Asegúrate de que la URL sea correcta -->
+            <li class="nav-item">
+              <a href="{% url 'signout' %}" class="dropdown-item" onclick="confirmSignout(event)">Cerrar sesión</a>
+            </li>
+          </ul>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a href="/" class="nav-link">Inicio</a>
+        </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+<script type="text/javascript">
+  function confirmSignout(event) {
+    event.preventDefault();  // Evita que el enlace redirija automáticamente
+    // Mostrar el cuadro de confirmación
+    const userConfirmed = confirm("¿Estás seguro que quieres cerrar sesión?");
+    // Si el usuario hace clic en "Aceptar", redirige a la URL de cierre de sesión
+    if (userConfirmed) {
+      window.location.href = "{% url 'signout' %}";  // Redirige al URL de cierre de sesión
+    }
+  }
+</script>

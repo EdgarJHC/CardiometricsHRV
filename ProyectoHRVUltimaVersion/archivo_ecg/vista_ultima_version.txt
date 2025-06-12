@@ -1,0 +1,145 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from .models import *
+from .forms import *
+from django.db.models import Q
+import pandas as pd 
+from datetime import datetime
+from django.http import JsonResponse
+import math
+
+from weasyprint import HTML
+from django.http import HttpResponse
+from django.conf import settings
+
+from django.template.loader import render_to_string
+
+import numpy as np
+from scipy.signal import firwin, lfilter, find_peaks, welch
+from scipy.interpolate import interp1d
+from pyhrv import time_domain
+from io import BytesIO
+import base64
+import json
+import plotly
+from django.core.serializers.json import DjangoJSONEncoder
+from biosppy.signals import ecg
+from django.utils import timezone
+
+from biosppy.signals.ecg import engzee_segmenter, correct_rpeaks
+from django.views.decorators.csrf import csrf_exempt
+
+
+
+
+
+def signup(request):
+    if request.method == 'GET':
+        departamentos = Departamento.objects.all()
+        form = UserRegistrationForm()
+        return render(request, 'signup.html', {"form": form, "departamentos": departamentos})
+    else:
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            password1 = form.cleaned_data.get('password1')
+            password2 = form.cleaned_data.get('password2')
+            if password1 == password2:
+                try:
+                    # Intento de crear el usuario
+                    user = form.save(commit=False)
+                    user.set_password(password1)  # Encripta la contraseña antes de guardar el usuario
+                    user.save()
+
+                    # Recoge los datos del formulario adicionales
+                    nombre_especialista = request.POST.get("nombres")
+                    apellido_paterno = request.POST.get("apellido_paterno")
+                    apellido_materno = request.POST.get("apellido_materno")
+                    telefono = request.POST.get("telefono")
+                    correo = request.POST.get("correo")
+                    especialidad = request.POST.get("especialidad")
+                    departamento_id = request.POST.get("departamento")
+                    fecha_nacimiento = request.POST.get("fecha_nacimiento")
+
+                    # Validación de que la fecha de nacimiento no sea nula
+                    if not fecha_nacimiento:
+                        return render(request, 'signup.html', {
+                            "form": form,
+                            "departamentos": Departamento.objects.all(),
+                            "error": "Por favor, proporciona una fecha de nacimiento válida."
+                        })
+
+                    # Obtiene la instancia de Departamento usando el ID proporcionado
+                    departamento = Departamento.objects.get(id_departamento=departamento_id)
+
+                    # Crea el objeto Especialista
+                    especialista = Especialista.objects.create(
+                        user=user,
+                        nombre_especialista=nombre_especialista,
+                        apellido_paterno=apellido_paterno,
+                        apellido_materno=apellido_materno,
+                        telefono=telefono,
+                        correo=correo,
+                        especialidad=especialidad,
+                        fecha_nacimiento=fecha_nacimiento,
+                        departamento_id=departamento  # Ahora asigna la instancia de Departamento
+                    )
+                    especialista.save()
+
+                    login(request, user)
+                    return redirect('homeDoctor')
+                except IntegrityError as e:
+                    print(e)  # Esto imprimirá la excepción completa en la consola.
+                    if 'UNIQUE constraint' in str(e):
+                        error_message = "El usuario ya existe. Prueba con otro nombre de usuario."
+                    else:
+                        error_message = f"Ocurrió un error durante el registro: {e}."  # Muestra el error específico
+                    return render(request, 'signup.html', {
+                        "form": form,
+                        "departamentos": Departamento.objects.all(),
+                        "error": error_message
+                    })
+
+            else:
+                # Si las contraseñas no coinciden
+                return render(request, 'signup.html', {
+                    "form": form,
+                    "departamentos": Departamento.objects.all(),
+                    "error": "Las contraseñas no coinciden."
+                })
+        
+        # Si el formulario no es válido
+        return render(request, 'signup.html', {
+            "form": form,
+            "departamentos": Departamento.objects.all(),
+            "error": "Por favor corrige los errores del formulario."
+        })
+
+# Vista para mostrar la página de inicio
+def home(request):
+    return render(request, 'home.html')
+
+
+# Vista para el inicio de sesión
+def signin(request):
+    
+    if request.method == 'GET':
+        return render(request, 'signin.html', {"form": AuthenticationForm()})
+    else:
+        user = authenticate(
+            request, username=request.POST['username'], password=request.POST['password1'])
+        if user is None:
+            return render(request, 'signin.html', {"form": AuthenticationForm(), "error": "Nombre de usuario o contraseña incorrectos."})
+
+        login(request, user)
+        return redirect('homeDoctor')
+
+# Vista para cerrar la sesión de un usuario
+@login_required
+def signout(request):
+    logout(request)
+    return redirect('home')  # Redirige a la URL 'home', que apunta a la vista 'home' definida en urls.py

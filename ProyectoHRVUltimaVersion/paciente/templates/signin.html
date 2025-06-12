@@ -1,0 +1,36 @@
+{% extends "base.html" %}  <!-- Extiende la plantilla base.html para reutilizar su estructura y estilo -->
+
+{% block content %}  <!-- Inicia el bloque de contenido que se insertará en la plantilla base -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/stylesSignin.css' %}">
+<div class="login-container"> <!-- Contenedor principal del formulario de inicio de sesión -->
+  <h1>Iniciar sesión</h1>  <!-- Título de la página que indica que es la página de inicio de sesión -->
+
+  <p>{{ error }}</p>  <!-- Muestra cualquier mensaje de error pasado desde la vista, como un mensaje de usuario o contraseña incorrectos -->
+
+  <form action="/signin/" method="POST">  <!-- Formulario que enviará datos al endpoint /signin/ usando el método POST -->
+    {% csrf_token %}  <!-- Token de seguridad para proteger contra ataques CSRF -->
+
+    <!-- Usuario -->
+    <div class="form-group">
+      <label for="username">Usuario:</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="Ingresa tu nombre de usuario" required>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="form-group">
+      <label for="password1">Contraseña:</label>
+      <input type="password" class="form-control" id="password1" name="password1" placeholder="Ingresa tu Contraseña" required>
+    </div>
+
+    <button type="submit" class="login-button">
+      Iniciar sesión  <!-- Texto que aparece en el botón -->
+    </button>
+
+    <button type='submit' class="login-button" formaction="{% url 'forgot_password' %}">
+      Olvidé mi contraseña 
+    </button>
+  </form>
+</div>
+
+{% endblock %}  <!-- Finaliza el bloque de contenido -->

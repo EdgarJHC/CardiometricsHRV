@@ -1,0 +1,1367 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{%load static%}
+<link rel="stylesheet" type="text/css" href="{% static 'css/ver_grafico.css' %}">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>General Results</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+<body>
+    <div class="container">
+<!-- Header -->
+<header class="header">
+    <div class="title">INFORME GENERAL DE LA VARIABILIDAD DE LA FRECUENCIA CARDIACA REGISTRO: {{registro_ecg.homoclave}} </div>
+    <div class="file-info"></div>
+
+<button 
+    onclick="confirmarDescarga('{{ paciente.correo }}')">
+    Enviar a E-mail
+</button>
+<button onclick="window.location.href='{% url 'pacientes' %}'" class="btn btn-primary">Regresar</button>
+</header>
+
+<!--Extraer los datos clave del HTML dinámico.
+    Crear un template HTML solo con el resumen.
+    Renderizarlo con Django y convertirlo en PDF con WeasyPrint.
+    Agregar un botón de descarga en tu página.-->
+    <!-- Botón Enviar E-mail -->
+
+<script>
+    function confirmarDescarga(email) {
+        const confirmacion = confirm("¿Ya descargaste el PDF del informe?, presiona 'Aceptar' para continuar y 'Cancelar' para guardar el informe en tu computadora.");
+        if (confirmacion) {
+            // Si el usuario confirma (clic en "Sí"), abre Gmail con los datos prellenados.
+            window.open(`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${email}&su=Informe HRV&body=Estimado/a  {{paciente.nombre_paciente}} {{paciente.apellido_paterno}} {{paciente.apellido_materno}}, adjunto el informe de sus resultados de HRV.`, '_blank');
+        } else {      
+            // Si el usuario cancela (clic en "No"), muestra una alerta.
+            alert("Por favor, guarda el informe antes de enviarlo por correo.");
+        }
+    }
+</script>
+    
+
+<!-- Main content -->
+<main>
+    <style>
+        /* Estilos para el contenedor de carga */
+        #loading-overlay {
+        display: none; /* Oculto al cargar la página */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+        /* Animación del corazón */
+        .heart {
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            position: relative;
+            transform: rotate(-45deg);
+            animation: heartbeat 1s infinite;
+        }
+    
+        .heart:before,
+        .heart:after {
+            content: "";
+            width: 100px;
+            height: 100px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+        }
+    
+        .heart:before {
+            top: -50px;
+            left: 0;
+        }
+    
+        .heart:after {
+            left: 50px;
+            top: 0;
+        }
+    
+        @keyframes heartbeat {
+            0% {
+                transform: scale(0.6) rotate(-45deg);
+            }
+            50% {
+                transform: scale(0.8) rotate(-45deg);
+            }
+            100% {
+                transform: scale(0.6) rotate(-45deg);
+            }
+        }
+    
+        /* Estilo para el texto de carga */
+        .loading-text {
+            color: white;
+            font-size: 20px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .histograms .graph-container {
+            height: 500px;
+            width: 600px;
+            background: white; /* Fondo blanco sólido o cualquier otro color */
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 100; /* Asegura que el contenido de los histogramas esté por encima */
+        }
+    </style>
+
+    <!-- Datos del Especialista -->
+    <section>
+        <h2 style="text-align: center;">Datos del Especialista</h2>
+        <table class="full-width-table">
+            <tr>
+                <th>Campo</th>
+                <th>Detalle</th>
+            </tr>
+            <tr>
+                <td>Nombre</td>
+                <td>{{ especialista.nombre_especialista }} {{ especialista.apellido_paterno }} {{ especialista.apellido_materno }}</td>
+            </tr>
+
+            <tr>
+                <td>Correo</td>
+                <td>{{ especialista.correo }}</td>
+            </tr>
+        </table>
+    </section>
+
+    <!-- Datos del Paciente -->
+    <section>
+        <h2 style="text-align: center;">Datos del Paciente</h2>
+        <table class="full-width-table">
+            <tr>
+                <th>Campo</th>
+                <th>Detalle</th>
+            </tr>
+            <tr>
+                <td>Nombre</td>
+                <td>{{ paciente.nombre_paciente }} {{ paciente.apellido_paterno }} {{ paciente.apellido_materno }}</td>
+            </tr>
+            <tr>
+                <td>Sexo</td>
+                <td>{{ paciente.sexo }}</td>
+            </tr>
+            <tr>
+                <td>Fecha de Nacimiento</td>
+                <td>{{ paciente.fecha_nacimiento }}</td>
+            </tr>
+            <tr>
+                <td>Teléfono</td>
+                <td>{{ paciente.telefono }}</td>
+            </tr>
+            <tr>
+                <td>Correo</td>
+                <td>{{ paciente.correo }}</td>
+            </tr>
+            <tr>
+                <td>Uso de Medicamentos</td>
+                <td>{{ paciente.uso_de_medicamentos }}</td>
+            </tr>
+            <tr>
+                <td>Actividad Física</td>
+                <td>{{ paciente.actividad_fisica }}</td>
+            </tr>
+        </table>
+    </section>
+</main>
+            <!-- Section: ECG -->
+            <section id="SeccionECG" class="graph-section">
+                <h2 class="section-title"> Electrocardiograma </h2>
+                <div class="graph-container">
+                    <!-- Exportación del json -->
+                    <div id="grafico_ecg"></div>
+                    <script id="graph_data" type="application/json">
+                        {{ graph_json|safe }}
+                    </script>
+                
+
+                <div id="form-container" class="form-container no-pdf">
+                    <label for="muestras_ecg" class="form-label">Segmento del ECG (s): </label>
+                    <input type="text" id="muestras_ecg_inicio" value="00:00:00" class="form-input">
+                    <input type="text" id="muestras_ecg_fin" value="00:05:00" class="form-input">
+                    <button onclick="actualizarGraficoECG()" class="form-button">Actualizar ECG</button>
+                </div>
+            </div>
+            </section>
+            <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    var tipoArchivo = JSON.parse("{{ TipoArchivo|default:0|escapejs }}"); 
+                    var formContainer = document.getElementById("SeccionECG");
+
+                    console.log('Tipo de archivo encontrado:', tipoArchivo);
+                    
+                    if (formContainer) {  
+                        if (tipoArchivo !== 0) {
+                            formContainer.style.display = "none";  // Ocultar
+                            formContainer.style.visibility = "hidden";  // Asegurar ocultamiento
+                            setTimeout(() => formContainer.remove(), 500); // Eliminar después de 0.5s
+                            console.log('El contenedor ha sido eliminado del DOM');
+                        }
+                    }
+                });
+            </script>
+            
+            
+
+            <!-- Section: Tacograma -->
+            <section class="graph-section">
+                <h2 class="section-title">Tacograma</h2>
+                <div class="graph-container">
+                    <!-- Exportación del json -->
+                    <div id="tacograma" class="tacograma"></div>
+                    <script id="graph_tacograma" type="application/json">
+                        {{ graph_json_tacograma|safe }}
+                    </script>
+                <!-- Boton de selección de muestras -->
+                <div class="graph-container no-pdf">
+                    <label for="muestras_tacograma">Segmento de tacograma (s):  </label>
+                    <input type="text" id="muestras_tacograma_inicio" value="00:00:00" class="form-input">
+                    <input type="text" id="muestras_tacograma_fin" value="{{ formatoDuracion }}" class="form-input">
+                    <div id="errorMensaje" style="color: red; font-weight: bold; display: none;"></div>
+                    <button onclick="actualizarGraficoTacograma()" class="form-button">Actualizar Tacograma</button>
+                </div>
+            </div>
+            </section>
+            <div id="loading-overlay" style="display: none;">
+                <div>
+                    <div class="heart"></div>
+                    <p class="loading-text">Analizando segmento, espere el mensaje de confirmación...</p>
+                </div>
+            </div>
+            <div>
+                <p>Duración total del Tacograma: <span id="duracion-total">{{ formatoDuracion }} segundos</span></p>
+                <label for="rr-range">Definir intervalo de análisis (en segundos):</label>
+                <input type="hidden" id="ecg-id" value="{{ ecg_id }}">
+                <input type="text" id="rr-range-start" placeholder="Inicio (HH:MM:SS)" value="00:00:00" class="form-input">
+                <input type="text" id="rr-range-end" placeholder="Fin (HH:MM:SS)" value="00:05:00" class="form-input">
+
+                <button id="analyze-segment">Analizar segmento</button>
+                <div id="status-message"></div>
+            </div>
+            <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    // Función para obtener el valor de la cookie CSRF
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Busca la cookie que comienza con el nombre proporcionado
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+    // Obtén el token CSRF
+    const csrftoken = getCookie('csrftoken');
+    
+    function timeToSeconds(time){
+        const parts = time.split(':');//split de separación
+        if (parts.length == 3){
+            const hours = parseInt(parts[0], 10);
+            const minutes = parseInt(parts[1], 10);
+            const seconds = parseInt(parts[2], 10);
+            return (hours * 3600 + minutes *60 + seconds)
+        }
+        return 0
+        
+    }
+
+    document.getElementById("analyze-segment").addEventListener("click", () => {
+        // Obtener los valores de los campos
+        document.getElementById("loading-overlay").style.display = "flex";
+
+        setTimeout(() => {
+        fetch('/analizar-segmento')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("loading-overlay").style.display = "none"; // Ocultar después de completar la solicitud
+                console.log(data); // Maneja la respuesta aquí
+            })
+            .catch(error => {
+                console.error('Error en el análisis:', error);
+                document.getElementById("loading-overlay").style.display = "none"; // Ocultar incluso si hay error
+            });
+    }, 1000); // 200ms de retraso
+
+
+        const start = document.getElementById("rr-range-start").value;
+        const end = document.getElementById("rr-range-end").value;
+
+        const startSeconds = timeToSeconds(start);
+        const endSeconds = timeToSeconds(end);
+
+        console.log("Tiempo de inicio en HH:MM:SS:", start);
+        console.log("Tiempo de fin en HH:MM:SS:", end);
+        console.log("Inicio en segundos:", startSeconds);
+        console.log("Fin en segundos:", endSeconds);
+
+    if (endSeconds - startSeconds < 299) {
+        alert("El intervalo de análisis no puede ser menor a 5 minutos.");
+        return;
+    }
+    // Validar que el intervalo sea válido
+    if (startSeconds >= endSeconds) {
+        alert("El inicio debe ser menor que el fin.");
+        return;
+    }
+
+    // Validar que los valores sean positivos
+    if (startSeconds < 0 || endSeconds < 0) {
+        alert("Ingrese un intervalo válido");
+        return;
+    }
+        // Obtener el ecg_id desde el campo oculto
+        const ecg_id = document.getElementById("ecg-id").value;
+
+        // Datos a enviar al backend
+        const data = {
+            inicio: startSeconds,
+            fin: endSeconds,
+        };
+
+     //   const statusMessage = document.getElementById("status-message");
+     //   statusMessage.textContent = "Los datos están siendo enviados. Por favor, espere el análisis...";
+        
+        console.log("CSRF Token:", csrftoken);
+
+        // Enviar datos al backend mediante POST
+        fetch(`/pacientes/ver_grafico/${ecg_id}/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken, // Incluye el token CSRF aquí
+            },
+            body: JSON.stringify(data),
+        })
+        .then((response) => response.json())
+        .then((data) => {
+            
+
+          //  console.log("Resultados del análisis:", data);
+          //  console.log("Se ha entrado al bloque de resultados del análisis");
+            // Actualizar resultados en el DOM con los valores recibidos del backend de resultados en el dominio del tiempo
+            document.getElementById("nni_mean-value").textContent = data.resultadosDT.nni_mean.toFixed(4);
+            document.getElementById("nni_min-value").textContent = data.resultadosDT.nni_min.toFixed(4);
+            document.getElementById("nni_max-value").textContent = data.resultadosDT.nni_max.toFixed(4);
+            document.getElementById("hr_mean-value").textContent = data.resultadosDT.hr_mean.toFixed(4);
+            document.getElementById("hr_min-value").textContent = data.resultadosDT.hr_min.toFixed(4);
+            document.getElementById("hr_max-value").textContent = data.resultadosDT.hr_max.toFixed(4);
+            document.getElementById("hr_std-value").textContent = data.resultadosDT.hr_std.toFixed(4);
+            document.getElementById("nni_diff_mean-value").textContent = data.resultadosDT.nni_diff_mean.toFixed(4);
+            document.getElementById("nni_diff_min-value").textContent = data.resultadosDT.nni_diff_min.toFixed(4);
+            document.getElementById("nni_diff_max-value").textContent = data.resultadosDT.nni_diff_max.toFixed(4);
+            document.getElementById("sdnn-value").textContent = data.resultadosDT.sdnn.toFixed(4);
+            document.getElementById("sdann-value").textContent = data.resultadosDT.sdann.toFixed(4);
+            document.getElementById("rmssd-value").textContent = data.resultadosDT.rmssd.toFixed(4);
+            document.getElementById("sdsd-value").textContent = data.resultadosDT.sdsd.toFixed(4);
+            document.getElementById("nn50-value").textContent = data.resultadosDT.nn50.toFixed(4);
+            document.getElementById("pnn50-value").textContent = data.resultadosDT.pnn50.toFixed(4);
+            document.getElementById("nn20-value").textContent = data.resultadosDT.nn20.toFixed(4);
+            document.getElementById("rr_mean-value").textContent = data.rr_mean.toFixed(4);
+            document.getElementById("total_intervalos").textContent = data.total_intervalos;
+
+            
+
+            // Actualizar resultados en el DOM para Dominio de la Frecuencia (DF)
+            document.getElementById("potencia_vlf-value").textContent = data.resultadosDF.potencia_vlf.toFixed(4);
+            document.getElementById("pico_vlf-value").textContent = data.resultadosDF.pico_vlf.toFixed(4);
+            document.getElementById("potencia_vlf_log-value").textContent = data.resultadosDF.potencia_vlf_log.toFixed(4);
+            document.getElementById("potencia_lf-value").textContent = data.resultadosDF.potencia_lf.toFixed(4);
+            document.getElementById("pico_lf-value").textContent = data.resultadosDF.pico_lf.toFixed(4);
+            document.getElementById("potencia_lf_log-value").textContent = data.resultadosDF.potencia_lf_log.toFixed(4);
+            document.getElementById("potencia_lf_nu-value").textContent = data.resultadosDF.potencia_lf_nu.toFixed(4);
+            document.getElementById("potencia_hf-value").textContent = data.resultadosDF.potencia_hf.toFixed(4);
+            document.getElementById("pico_hf-value").textContent = data.resultadosDF.pico_hf.toFixed(4);
+            document.getElementById("potencia_hf_log-value").textContent = data.resultadosDF.potencia_hf_log.toFixed(4);
+            document.getElementById("potencia_hf_nu-value").textContent = data.resultadosDF.potencia_hf_nu.toFixed(4);
+            document.getElementById("potencia_total-value").textContent = data.resultadosDF.potencia_total.toFixed(4);
+            document.getElementById("lf_hf_ratio-value").textContent = data.resultadosDF.lf_hf_ratio.toFixed(4);
+    
+            
+            //console.log("JSON recibido de graph_json_RR:", data.graph_json_RR);
+            //console.log('Tipo de dato recibido de graph_json_RR',typeof data.graph_json_RR)
+            //Actualizar histograma RR con
+
+                    try {
+           // console.log("JSON recibido de graph_json_RR:", data.graph_json_RR);
+            
+        const graphData = JSON.parse(data.graph_json_RR);
+        // console.log("JSON parseado correctamente:", graphData);
+        // Aplicar el mismo formato al layout actualizado
+        const layout_actualizado = {
+                ...graphData.layout,
+                title: {}, 
+                xaxis: { 
+                    title: 'Intervalo RR (ms)', 
+                    titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+                    zeroline: true,
+                    zerolinecolor: 'black',
+                    zerolinewidth: 1,
+                    nbinsx: 20,  // Se mantiene la configuración del histograma
+                },
+                yaxis: { 
+                    title: 'Frecuencia', 
+                    titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' }
+                }
+            };
+
+            // Aplicar el mismo formato a los datos actualizados
+            const data_actualizada = graphData.data.map((trace) => ({
+                ...trace,
+                marker: { color: 'rgba(165, 204, 249, 1)', line: { color: 'rgba(0, 0, 0, 1)', width: 1 } },
+            }));
+
+            // Actualizar el gráfico con los datos y el formato corregido
+            Plotly.react('histograma_rr', data_actualizada, layout_actualizado, { responsive: true });
+
+        } catch (error) {
+            console.error("Error al parsear graph_json_RR:", error);
+        }
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////Actualización del histograma de Frecuencia Cardica////////////////////////////////////////////////////////////////////////////////////////////////////////7
+
+            try {
+                //console.log("JSON recibido de graph_json_HR:", data.graph_json_HR);
+                
+                const graphData = JSON.parse(data.graph_json_HR);
+            //  console.log("JSON parseado correctamente:", graphDataHR);
+
+                // Aplicar el mismo formato al layout actualizado
+                const layout_actualizado = {
+                    ...graphData.layout,
+                    title: {},  // Asegura que el título esté vacío si así se necesita
+                    xaxis: { 
+                        title: 'Frecuencia Cardíaca (ms)', 
+                        titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+                        zeroline: true,
+                        zerolinecolor: 'black',
+                        zerolinewidth: 1,
+                        nbinsx: 20,  // Se mantiene la configuración del histograma
+                    },
+                    yaxis: { 
+                        title: 'Frecuencia', 
+                        titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' }
+                    }
+                };
+                // Aplicar el mismo formato a los datos actualizados
+                const data_actualizada = graphData.data.map((trace) => ({
+                    ...trace,
+                    marker: { color: 'rgba(111, 144, 255, 1)', line: { color: 'rgba(0, 0, 0, 1)', width: 1 } },
+                }));
+
+                
+               // console.log("Datos enviados a Plotly:", JSON.stringify(data_actualizada, null, 2));
+               // console.log("Layout enviado a Plotly:", JSON.stringify(layout_actualizado, null, 2));
+
+
+                // Actualizar el gráfico con los datos y el formato corregido
+                Plotly.react('histograma_hr', data_actualizada, layout_actualizado, { responsive: true })
+            // Plotly.relayout('histograma_hr', { autosize: true })
+                .then(() => console.log("Plotly.react ejecutado con éxito"))
+                .catch((err) => console.error("Error en Plotly.react:", err));
+
+            } catch (error) {
+                console.error("Error al parsear graph_json_RR:", error);
+            }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////Actualización del PSD////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////7
+        try {
+            //console.log("Respuesta del backend:", data);
+            const graphData = JSON.parse(data.graph_json_Welch);
+            console.log("JSON parseado correctamente:", data.graph_json_welch);
+        
+        // Define las bandas de frecuencia para colorear
+        const bandas_Frecuencia = [
+            { rango: [0.0033, 0.04], color: 'rgba(0, 64, 255, 0.8)', nombre: 'VLF' },  // Banda VLF (0.0033 - 0.04 Hz)
+            { rango: [0.04, 0.15], color: 'rgba(145, 195, 10, 0.8)', nombre: 'LF' },   // Banda LF (0.04 - 0.15 Hz)
+            { rango: [0.15, 0.4], color: 'rgba(210, 83, 7, 0.8)', nombre: 'HF' }    // Banda HF (0.15 - 0.4 Hz)
+        ];
+
+        // Función para generar los datos con áreas coloreadas por bandas
+        const generarDatosColoreados = (data) => {
+            const x = data.x;
+            const y = data.y;
+
+            const traces = [];
+
+            bandas_Frecuencia.forEach((banda) => {
+                const indices = [];
+                const valores = [];
+
+                // Filtrar frecuencias dentro de cada banda
+                for (let i = 0; i < x.length; i++) {
+                    if (x[i] >= banda.rango[0] && x[i] <= banda.rango[1]) {
+                        indices.push(x[i]);
+                        valores.push(y[i]);
+                    }
+                }
+
+                if (indices.length > 0) {
+                    traces.push({
+                        x: indices,
+                        y: valores,
+                        mode: 'lines',
+                        fill: 'tozeroy',
+                        fillcolor: banda.color,
+                        line: { color: banda.color },
+                        name: banda.nombre
+                    });
+                }
+            });
+
+            return traces;
+        };
+
+        // Datos para el gráfico de Welch (también con colores por bandas)
+        const data_Welch = generarDatosColoreados(graphData.data[0]);
+
+        // Layout del gráfico de Welch
+        const layout_Welch_actualizados = {
+            title: graphData.layout.title,
+            autosize: false,
+            xaxis: {
+                title: graphData.layout.xaxis.title,
+                range: [0, 0.5],  // Rango ajustable de frecuencias
+                titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+            },
+            yaxis: {
+                title: graphData.layout.yaxis.title,
+                titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+            },
+            showlegend: true
+        };
+
+        // Actualización del gráfico de Welch
+        Plotly.react('Welch', data_Welch, layout_Welch_actualizados, { responsive: true })
+            .then(() => console.log("Gráfico de Welch actualizado con éxito"))
+            .catch((err) => console.error("Error al actualizar el gráfico de Welch:", err));
+    } catch (error) {
+        console.error("Error en la actualización del gráfico de Welch:", error);
+    }
+        alert("Los datos se han actualizado correctamente.");}
+    )
+        
+        .catch((error) => {
+            console.error("Hubo un problema con la solicitud:", error);
+            alert("Hubo un problema al procesar la solicitud.");
+        });
+    });
+});
+
+</script>    
+            <!-- Bloque para datos completos -->
+            <script id="datos_completos" type="application/json">
+                {{ datos_completos_json|safe }}
+            </script>
+
+
+            <script type="text/javascript">
+            // Cargar los datos iniciales desde el servidor
+                const graph_data_ecg = JSON.parse(document.getElementById('graph_data').textContent);
+                const graph_data_tacograma = JSON.parse(document.getElementById('graph_tacograma').textContent);
+                const datos_completos = JSON.parse(document.getElementById('datos_completos').textContent);
+                
+
+ const layout_ecg = {
+    title: {
+        font: { 
+            family: 'Arial, sans-serif', 
+            size: 24,
+            color: 'black',
+            x: 0.5, 
+        }
+    },
+    xaxis: {
+        title: 'Tiempo (segundos)',
+        titlefont: { 
+            family: 'Arial, sans-serif', 
+            size: 12,
+            color: 'black', 
+        },
+        zeroline: true,
+        zerolinecolor: 'black', 
+        zerolinewidth: 1,
+    },
+    yaxis: {
+        title: 'Voltaje (mV)',
+        titlefont: { 
+            family: 'Arial, sans-serif', 
+            size: 12,
+            color: 'black', 
+        },
+        zeroline: true, 
+        zerolinecolor: 'black', 
+        zerolinewidth: 1,
+    },
+    margin: { l:50, r: 50, b: 50, t: 50 },
+    showlegend: true,
+};
+
+const data_ecg = graph_data_ecg.data.map((trace) => ({
+    ...trace,
+    line: {
+        color: 'navy', 
+        width: 2, 
+    },
+}));
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    iluminarPrimeros300Segundos();
+});
+
+function iluminarPrimeros300Segundos() {
+    // Filtrar los intervalos RR hasta alcanzar los primeros 300 segundos
+    const primeros300Segundos = [];
+    const tiempo_acumulado = [];
+    let duracion_acumulada = 0;
+
+    // Recorrer los intervalos y acumular hasta los 300 segundos
+    for (let i = 0; i < datos_completos.tacograma.intervalos.length; i++) {
+        duracion_acumulada += datos_completos.tacograma.intervalos[i] / 1000; // Convertir a segundos
+        if (duracion_acumulada >= 300) break; // Salir cuando lleguemos a los 300 segundos
+
+        primeros300Segundos.push(datos_completos.tacograma.intervalos[i]);
+        tiempo_acumulado.push(duracion_acumulada);
+    }
+
+    // Crear el conjunto de datos para los primeros 300 segundos
+    const data_tacograma = graph_data_tacograma.data.map((trace) => ({
+        ...trace,
+        x: trace.x.map((time_ms) => time_ms / 500), // Convertir de ms a segundos
+        line: {
+            color: 'navy', // Color del trazo
+            width: 2,      // Ancho del trazo
+        },
+        marker: { color: 'blue', size: 5 }, // Personalización de los puntos
+    }));
+
+    // Crear el objeto de layout para el gráfico
+    const layout_tacograma = {
+        title: {
+            text: 'Tacograma',
+            font: { 
+                family: 'Arial, sans-serif',
+                size: 24,
+                color: 'black',
+                x: 0.5,
+            },
+        },
+        xaxis: {
+            title: 'Tiempo (s)',
+            titlefont: { 
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: 'black',
+            },
+            zeroline: false,
+            zerolinecolor: 'black',
+            zerolinewidth: 1,
+        },
+        yaxis: {
+            title: 'Intervalo RR (s)',
+            titlefont: { 
+                family: 'Arial, sans-serif',
+                size: 12,
+                color: 'black',
+            },
+            zerolinecolor: 'black',
+            zerolinewidth: 1,
+        },
+        margin: { l: 50, r: 50, b: 50, t: 50 },
+        showlegend: true,
+        // Definir la forma para iluminar el área de los primeros 300 segundos
+        shapes: [
+            {
+                type: 'rect',
+                x0: 0, // Inicio en el eje X
+                x1: tiempo_acumulado[tiempo_acumulado.length - 1], // Fin en el eje X
+                y0: 0, // Limite inferior del eje Y
+                y1: Math.max(...primeros300Segundos), // Limite superior del eje Y, basado en los valores de intervalo
+                fillcolor: 'rgba(135, 206, 235, 0.3)', // Color del área iluminada
+                line: {
+                    width: 0 // Eliminar el borde (sin línea)
+                }
+            },
+        ],
+    };
+
+    // Aquí iría el código para actualizar o mostrar el gráfico con Plotly
+    Plotly.newPlot('tacograma', data_tacograma, layout_tacograma);
+}
+
+
+
+Plotly.newPlot('grafico_ecg', data_ecg, layout_ecg, {responsive: true});
+//Plotly.newPlot('tacograma', data_tacograma, layout_tacograma, {responsive: true});
+
+function convertirTiempoASegundos(hhmmss) {
+    const partes = hhmmss.split(":").map(Number);
+    if (partes.length !== 3 || partes.some(isNaN)) {
+        console.error("Formato de tiempo incorrecto. Use HH:MM:SS");
+        return null;
+    }
+    return partes[0] * 3600 + partes[1] * 60 + partes[2]; // Convertir a segundos
+}
+
+function actualizarGraficoECG() {
+    // Obtener los valores de inicio y fin desde los inputs de tiempo
+    const inicio_seg = convertirTiempoASegundos(document.getElementById("muestras_ecg_inicio").value);
+    const fin_seg = convertirTiempoASegundos(document.getElementById("muestras_ecg_fin").value);
+    
+    console.log("Inicio en segundos:", inicio_seg);
+    console.log("Fin en segundos:", fin_seg);
+
+    // Verificar valores de entrada
+    if (inicio_seg === null || fin_seg === null || inicio_seg >= fin_seg) {
+        console.error("Verifique los tiempos ingresados.");
+        return;
+    }
+
+    // Convertir los tiempos de inicio y fin en muestras, usando la frecuencia de muestreo
+    const inicio_muestras = Math.floor(inicio_seg * datos_completos.fm);
+    const fin_muestras = Math.floor(fin_seg * datos_completos.fm);
+
+    // Filtrar los datos del ECG según el rango de muestras
+    const tiempo_filtrado = datos_completos.ecg.tiempo.slice(inicio_muestras, fin_muestras);
+    const voltaje_filtrado = datos_completos.ecg.voltaje.slice(inicio_muestras, fin_muestras);
+
+    // Verificar si el rango tiene datos válidos
+    if (tiempo_filtrado.length === 0 || voltaje_filtrado.length === 0) {
+        console.error("No hay datos en el rango seleccionado.");
+        return;
+    }
+
+    // Actualizar el gráfico ECG
+    const ecg_data = [{
+        x: tiempo_filtrado,
+        y: voltaje_filtrado,
+        type: 'scatter',
+        mode: 'lines',
+        name: 'ECG',
+        line: { color: 'navy', width: 2 }
+    }];
+
+    // Configuración del diseño del gráfico
+    const layout = {
+        title: 'Gráfico ECG',
+        xaxis: { title: 'Tiempo (s)' },
+        yaxis: { title: 'Voltaje (mV)' }
+    };
+
+    // Renderizar el gráfico actualizado
+    Plotly.react('grafico_ecg', ecg_data, layout);
+}
+function actualizarGraficoTacograma() {
+    // Ver que botón se necesita para activarse
+    
+    const startAnalisis = document.getElementById("rr-range-start").value;
+    const endAnalisis = document.getElementById("rr-range-end").value;
+    // Direccionamiento del formulario del ingreso del análisis 
+    const startAnalisisSeg = convertirTiempoASegundos(startAnalisis);
+    const endAnalisisSeg = convertirTiempoASegundos(endAnalisis);
+
+    console.log('Se mando correctamente el inicio', startAnalisisSeg);
+    console.log('Se mando correctamente el fin', endAnalisisSeg); // Llegan correctamente 
+
+    // Obtener valores de los inputs y convertirlos a segundos
+    const inicio_seg = convertirTiempoASegundos(document.getElementById("muestras_tacograma_inicio").value);
+    const fin_seg = convertirTiempoASegundos(document.getElementById("muestras_tacograma_fin").value);
+    
+    console.log("Inicio en segundos:", inicio_seg);
+    console.log("Fin en segundos:", fin_seg);
+
+    // Verificar valores de entrada
+    if (inicio_seg === null || fin_seg === null || inicio_seg >= fin_seg) {
+        console.error("Verifique los tiempos ingresados.");
+        return;
+    }
+    // Convertir a milisegundos
+    const inicio_ms = inicio_seg * 1000;
+    const fin_ms = fin_seg * 1000;
+
+    let duracion_acumulada = 0; // Para la creación del eje de tiempo 
+    let indices_seleccionados = []; // Guardar los índices de los intervalos RR en el rango
+    let tiempo_acumulado = []; // Eje X corregido
+    let suma_acumulada = inicio_ms; // Iniciar en el tiempo de inicio en ms
+
+    // Filtrar los puntos dentro del rango
+    for (let i = 0; i < datos_completos.tacograma.intervalos.length; i++) {
+        duracion_acumulada += datos_completos.tacograma.intervalos[i];
+
+        if (duracion_acumulada >= inicio_ms && duracion_acumulada <= fin_ms) {
+            indices_seleccionados.push(i); // Guardar los índices seleccionados
+        }
+        if (duracion_acumulada > fin_ms) {
+            break; // Salir si ya pasamos el rango
+        }
+    }
+
+    if (indices_seleccionados.length === 0) {
+        console.error("No hay datos en el rango seleccionado.");
+        return;
+    }
+
+    // Construcción del tiempo acumulado correctamente (eje X corregido)
+    for (let i of indices_seleccionados) {
+        suma_acumulada += datos_completos.tacograma.intervalos[i];
+        tiempo_acumulado.push(suma_acumulada / 1000); // Convertir a segundos
+    }
+
+    // Extraer los intervalos filtrados (eje Y)
+    const intervalos_filtrados = indices_seleccionados.map(i => datos_completos.tacograma.intervalos[i]);
+
+    // Iluminar el área según los intervalos de tiempo seleccionados
+    const shapes = [{
+        type: 'rect',
+        x0: startAnalisisSeg, // Inicio en el eje X (en segundos)
+        x1: endAnalisisSeg,   // Fin en el eje X (en segundos)
+        y0: 0,                // Limite inferior del eje Y
+        y1: Math.max(...intervalos_filtrados), // Limite superior del eje Y, basado en los valores de intervalo
+        fillcolor: 'rgba(135, 206, 235, 0.3)', // Color de la zona iluminada
+        line: { width: 0 } // Sin bordes
+    }];
+
+    // Actualizar el gráfico
+    const tacograma_data = [{
+        x: tiempo_acumulado,
+        y: intervalos_filtrados,
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: 'Tacograma',
+        showline: true,
+        line: { color: 'black' },
+        marker: { color: 'blue', size: 5 }
+    }];
+
+    Plotly.react('tacograma', tacograma_data, {
+        title: 'Tacograma - Intervalos RR',
+        xaxis: { title: 'Tiempo (s)' },
+        yaxis: { title: 'Intervalo RR (ms)' },
+        shapes: shapes  // Añadir la forma para iluminar el área
+    });
+}
+
+
+
+</script><!-- Termina la sección de JS-->
+
+<!-- Bloque para datos completos -->
+<script id="datos_completos" type="application/json">
+    {{ datos_completos_json|safe }}
+</script>
+
+<main>
+
+
+<!-- Histogramas: Nueva posición antes de los resultados del dominio del tiempo -->
+<div class="distributions">
+    <h3>Distribuciones</h3>
+    <div class="histograms">
+        <!-- Histograma intervalos RR -->
+        <section class="graph-section">
+            <h2 class="section-title">Histograma intervalos RR</h2>
+            <div class="graph-container">
+                <div id="histograma_rr"></div>
+                <script id="graph_histogramaRR" type="application/json">
+                    {{ graph_json_RR|safe }}
+                </script>
+
+                            <!-- Tabla 2x3 para Histograma intervalos RR -->
+            <table class="histogram-table">
+                <tr>
+                    <td><strong>Variable</strong></td>
+                    <td><strong>Unidad</strong></td>
+                    <td><strong>Valor promedio</strong></td>
+                </tr>
+                <tr>
+                    <td>NNI</td>
+                    <td>ms</td>
+                    <td> {{resultadosDT.nni_mean|floatformat:4}} </td>
+                </tr>
+            </table>
+        </section>
+            
+
+
+        <!-- Histograma Frecuencia Cardiaca (FC) -->
+        <section class="graph-section">
+            <h2 class="section-title">Histograma Frecuencia Cardiaca (FC)</h2>
+            <div class="graph-container">
+                <div id="histograma_hr"></div>
+                <script id="graph_histogramaHR" type="application/json">
+                    {{ graph_json_HR|safe }}
+                </script>
+
+                <table class="histogram-table">
+                    <thead>
+                    <tr>
+                        <td><strong>Variable</strong></td>
+                        <td><strong>Unidad</strong></td>
+                        <td><strong>Valor promedio</strong></td>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                    <tr>
+                        <td>HR</td>
+                        <td>lpm</td>
+                        <td> {{resultadosDT.hr_mean|floatformat:4}} </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+           
+
+        </section>
+    </div>
+</div>
+
+<!-- Resultados del dominio del tiempo -->
+<section class="results-section no-pdf">
+    <div class="time-domain-results">
+        <h3>Resultados Dominio del tiempo</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Variable</th>
+                    <th>Unidad</th>
+                    <th>Valor</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>NNI (mean/min/max)</td>
+                    <td>(ms)</td>
+                    <td>
+                        <span id="nni_mean-value">{{ resultadosDT.nni_mean|floatformat:4 }} |</span>
+                        <span id="nni_min-value">{{ resultadosDT.nni_min|floatformat:4 }}   |</span>
+                        <span id="nni_max-value">{{ resultadosDT.nni_max|floatformat:4 }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>HR (mean/min/max)</td>
+                    <td>(lpm)</td>
+                    <td>
+                        <span id="hr_mean-value">{{ resultadosDT.hr_mean|floatformat:4 }}   |</span>
+                        <span id="hr_min-value">{{ resultadosDT.hr_min|floatformat:4 }} |</span>
+                        <span id="hr_max-value">{{ resultadosDT.hr_max|floatformat:4 }} </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>STD_HR</td>
+                    <td>(lpm)</td>
+                    <td id="hr_std-value">{{ resultadosDT.hr_std|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>NNI_DIFF (mean/min/max)</td>
+                    <td>(ms)</td>
+                    <td>
+                        <span id="nni_diff_mean-value">{{ resultadosDT.nni_diff_mean|floatformat:4 }} |</span>
+                        <span id="nni_diff_min-value">{{ resultadosDT.nni_diff_min|floatformat:4 }} |</span>
+                        <span id="nni_diff_max-value">{{ resultadosDT.nni_diff_max|floatformat:4 }} </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>SDNN</td>
+                    <td>(ms)</td>
+                    <td id="sdnn-value">{{ resultadosDT.sdnn|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>SDANN</td>
+                    <td>(ms)</td>
+                    <td id="sdann-value">{{ resultadosDT.sdann|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>RMSSD</td>
+                    <td>(ms)</td>
+                    <td id="rmssd-value">{{ resultadosDT.rmssd|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>SDSD</td>
+                    <td>(ms)</td>
+                    <td id="sdsd-value">{{ resultadosDT.sdsd|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>NN50</td>
+                    <td>()</td>
+                    <td id="nn50-value">{{ resultadosDT.nn50|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>PNN50</td>
+                    <td>(%)</td>
+                    <td id="pnn50-value">{{ resultadosDT.pnn50|floatformat:4 }}</td>
+                </tr>
+                <tr>
+                    <td>NN20</td>
+                    <td>()</td>
+                    <td id="nn20-value">{{ resultadosDT.nn20|floatformat:4|default:0 }} </td>
+                </tr>
+                <tr>
+                    <td>RR_MEAN</td>
+                    <td>(ms)</td>
+                    <td id="rr_mean-value">{{ rr_mean|floatformat:4 }} </td>
+                </tr>
+                <tr>
+                    <td>TOTAL INTERVALOS RR</td>
+                    <td>()</td>
+                    <td id="total_intervalos">{{ total_intervalos|floatformat:4 }}</td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</section>
+
+</main>
+
+            <script type="text/javascript">
+
+
+
+
+ // Datos y configuraciones para el histograma RR
+const graph_data_histograma_rr = JSON.parse(document.getElementById('graph_histogramaRR').textContent);
+const layout_histogramaRR = {
+    title: {},
+    xaxis: { title: 'Intervalo RR (ms)', titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+    zeroline: true,  // Mostrar la línea del eje X donde y = 0
+        zerolinecolor: 'black',  // Color de la línea cero
+        zerolinewidth: 1,  // Ancho de la línea cero
+        // Cálculo de nbinsx con la fórmula de Sturges
+        nbinsx: 10,  },
+    yaxis: { title: 'Frecuencia', titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' } },
+};
+const data_histogramaRR = graph_data_histograma_rr.data.map((trace) => ({
+    ...trace,
+    marker: { color: 'rgba(165, 204, 249, 1)', line: { color: 'rgba(0, 0, 0, 1)', width: 1 } },
+}));
+Plotly.react('histograma_rr', data_histogramaRR, layout_histogramaRR, { responsive: true });
+
+// Datos y configuraciones para el histograma HR
+const graph_data_histograma_hr = JSON.parse(document.getElementById('graph_histogramaHR').textContent);
+const layout_histogramaHR = {
+    title: {},
+    xaxis: { title: 'Frecuencia Cardiaca (bpm)', titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+    zeroline: true,  // Mostrar la línea del eje X donde y = 0
+        zerolinecolor: 'black',  // Color de la línea cero
+        zerolinewidth: 1,  // Ancho de la línea cero
+        // Cálculo de nbinsx con la fórmula de Sturges
+        nbinsx: 10,  },
+    yaxis: { title: 'Frecuencia', titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' } },
+};
+const data_histogramaHR = graph_data_histograma_hr.data.map((trace) => ({
+    ...trace,
+    marker: { color: 'rgba(111, 144, 255, 1)', line: { color: 'rgba(0, 0, 0, 1)', width: 1 } },
+}));
+Plotly.react('histograma_hr', data_histogramaHR, layout_histogramaHR, { responsive: true });
+
+
+
+            </script>
+
+            <!-- Section: Frequency-Domain Results -->
+            <section class="frequency-results">
+                <h3>Resultados en el Dominio de la frecuencia </h3>
+        
+        
+                <!-- Welch Graph Section -->
+                <section class="graph-section">
+                    <div class="frequency-graphs">
+                        <h2 class="section-title">Densidad Espectral de Potencia (PSD Welch)</h2>
+                        <div class="graph-container">
+                            <div id="Welch"></div>
+                            <script id="graph_Welch" type="application/json">
+                                {{ graph_json_Welch|safe }}
+                            </script>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        
+            <script type="text/javascript">
+                // Obtén los datos de la FFT y Welch desde los elementos de script
+                const graph_data_WELCH = JSON.parse(document.getElementById('graph_Welch').textContent);
+                
+                // Define las bandas de frecuencia para colorear
+                const bandas_Frecuencia = [
+                    { rango: [0.0033, 0.04], color: 'rgba(0, 64, 255, 0.8)', nombre: 'VLF' },  // Banda VLF (0.0033 - 0.04 Hz)
+                    { rango: [0.04, 0.15], color: 'rgba(145, 195, 10, 0.8)', nombre: 'LF' },   // Banda LF (0.04 - 0.15 Hz)
+                    { rango: [0.15, 0.4], color: 'rgba(210, 83, 7, 0.8)', nombre: 'HF' }    // Banda HF (0.15 - 0.4 Hz)
+                ];
+        
+                // Función para generar los datos con áreas coloreadas por bandas
+                const generarDatosColoreados = (data) => {
+                    const x = data.x;
+                    const y = data.y;
+        
+                    const traces = [];
+        
+                    bandas_Frecuencia.forEach((banda) => {
+                        const indices = [];
+                        const valores = [];
+        
+                        // Filtrar frecuencias dentro de cada banda
+                        for (let i = 0; i < x.length; i++) {
+                            if (x[i] >= banda.rango[0] && x[i] <= banda.rango[1]) {
+                                indices.push(x[i]);
+                                valores.push(y[i]);
+                            }
+                        }
+        
+                        if (indices.length > 0) {
+                            traces.push({
+                                x: indices,
+                                y: valores,
+                                mode: 'lines',
+                                fill: 'tozeroy',
+                                fillcolor: banda.color,
+                                line: { color: banda.color },
+                                name: banda.nombre
+                            });
+                        }
+                    });
+        
+                    return traces;
+                };
+ 
+        
+                // Datos para el gráfico de Welch (también con colores por bandas)
+                const data_Welch = generarDatosColoreados(graph_data_WELCH.data[0]);
+        
+                // Layout del gráfico de Welch
+                const layout_Welch = {
+                    title: graph_data_WELCH.layout.title,
+                    xaxis: {
+                        title: graph_data_WELCH.layout.xaxis.title,
+                        range: [0, 0.5],  // Rango ajustable de frecuencias
+                        titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+                    },
+                    yaxis: {
+                        title: graph_data_WELCH.layout.yaxis.title,
+                        titlefont: { family: 'Arial, sans-serif', size: 12, color: 'black' },
+                    },
+                    showlegend: true
+                };
+        
+                // Renderiza el gráfico de Welch con los colores de las bandas
+                Plotly.newPlot('Welch', data_Welch, layout_Welch, { responsive: true });
+
+            </script>
+                <table class="frequency-table">
+                    <thead>
+                        <tr>
+                            <th>Banda</th>
+                            <th>Potencia (ms²)</th>
+                            <th>Peak (Hz)</th>
+                            <th>Potencia (log)</th>
+                            <th>Potencia (n.u.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>VLF (0 - 0.04 Hz)</td>
+                            <td>
+                                <span id="potencia_vlf-value">{{resultadosDF.potencia_vlf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="pico_vlf-value">{{resultadosDF.pico_vlf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="potencia_vlf_log-value">{{resultadosDF.potencia_vlf_log|floatformat:4}}</span>
+                            </td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>LF (0.04 - 0.15 Hz)</td>
+                            <td>
+                                <span id="potencia_lf-value">{{resultadosDF.potencia_lf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="pico_lf-value">{{resultadosDF.pico_lf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="potencia_lf_log-value">{{resultadosDF.potencia_lf_log|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="potencia_lf_nu-value">{{resultadosDF.potencia_lf_nu|floatformat:4}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>HF (0.15 - 0.4 Hz)</td>
+                            <td>
+                                <span id="potencia_hf-value">{{resultadosDF.potencia_hf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="pico_hf-value">{{resultadosDF.pico_hf|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="potencia_hf_log-value">{{resultadosDF.potencia_hf_log|floatformat:4}}</span>
+                            </td>
+                            <td>
+                                <span id="potencia_hf_nu-value">{{resultadosDF.potencia_hf_nu|floatformat:4}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Potencia total</td>
+                            <td id="potencia_total-value">{{resultadosDF.potencia_total|floatformat:4}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>LF/HF</td>
+                            <td id="lf_hf_ratio-value">{{resultadosDF.lf_hf_ratio|floatformat:4}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <form method="get" action="{% url 'generar_pdf' ecg_id=ecg_id %}">
+                <input type="hidden" name="rr-range-start" id="hidden_start" value="">
+                <input type="hidden" name="rr-range-end" id="hidden_end" value="">
+                <input type="hidden" name="nni_mean" id="nni_mean">
+                <input type="hidden" name="nni_min" id="nni_min">
+                <input type="hidden" name="nni_max" id="nni_max">
+                <input type="hidden" name="hr_mean" id="hr_mean">
+                <input type="hidden" name="hr_min" id="hr_min">
+                <input type="hidden" name="hr_max" id="hr_max">
+                <input type="hidden" name="hr_std" id="hr_std">
+                <input type="hidden" name="nni_diff_mean" id="nni_diff_mean">
+                <input type="hidden" name="nni_diff_min" id="nni_diff_min">
+                <input type="hidden" name="nni_diff_max" id="nni_diff_max">
+                <input type="hidden" name="sdnn" id="sdnn">
+                <input type="hidden" name="sdann" id="sdann">
+                <input type="hidden" name="rmssd" id="rmssd">
+                <input type="hidden" name="sdsd" id="sdsd">
+                <input type="hidden" name="nn50" id="nn50">
+                <input type="hidden" name="pnn50" id="pnn50">
+                <input type="hidden" name="nn20" id="nn20">
+                <input type="hidden" name="rr_mean" id="rr_mean">
+                <input type="hidden" name="total_intervalos" id="total_intervalos">
+                <input type="hidden" name="potencia_vlf" id="potencia_vlf">
+                <input type="hidden" name="potencia_lf" id="potencia_lf">
+                <input type="hidden" name="potencia_hf" id="potencia_hf">
+                <input type="hidden" name="potencia_total" id="potencia_total">
+                <input type="hidden" name="lf_hf_ratio" id="lf_hf_ratio" >
+                <input type="hidden" name="potencia_vlf_log" id="potencia_vlf_log">
+                <input type="hidden" name="potencia_lf_log" id="potencia_lf_log">
+                <input type="hidden" name="potencia_hf_log" id="potencia_hf_log">
+                <input type="hidden" name="potencia_lf_nu" id="potencia_lf_nu">
+                <input type="hidden" name="potencia_hf_nu" id="potencia_hf_nu">
+                <input type="hidden" name="pico_vlf" id="pico_vlf">
+                <input type="hidden" name="pico_lf" id="pico_lf">
+                <input type="hidden" name="pico_hf" id="pico_hf">
+                <!-- Agrega más campos si es necesario -->
+                <button type="submit" onclick="capturarImagen()">Generar Reporte PDF</button>
+            </form>
+            <script>
+                function capturarImagen(){
+                    let start = document.getElementById("rr-range-start").value;
+                    let end = document.getElementById("rr-range-end").value;
+                    let nni_mean =  document.getElementById('nni_mean-value').textContent.trim();
+                    let nni_min = document.getElementById('nni_min-value').textContent.trim();
+                    let nni_max = document.getElementById('nni_max-value').textContent.trim();
+                    let hr_mean = document.getElementById('hr_mean-value').textContent.trim();
+                    let hr_min = document.getElementById('hr_min-value').textContent.trim();
+                    let hr_max = document.getElementById('hr_max-value').textContent.trim();
+                    let hr_std = document.getElementById('hr_std-value').textContent.trim();
+                    let nni_diff_mean = document.getElementById("nni_diff_mean-value").textContent.trim();
+                    let nni_diff_min = document.getElementById("nni_diff_min-value").textContent.trim();
+                    let nni_diff_max = document.getElementById("nni_diff_max-value").textContent.trim();
+                    let sdnn = document.getElementById("sdnn-value").textContent.trim();
+                    let sdann = document.getElementById("sdann-value").textContent.trim();
+                    let rmssd = document.getElementById("rmssd-value").textContent.trim();
+                    let sdsd = document.getElementById("sdsd-value").textContent.trim();
+                    let nn50 = document.getElementById("nn50-value").textContent.trim();
+                    let pnn50 = document.getElementById("pnn50-value").textContent.trim();
+                    let nn20 = document.getElementById("nn20-value").textContent.trim();
+                    let rr_mean = document.getElementById("rr_mean-value").textContent.trim();
+                    let total_intervalos = document.getElementById("total_intervalos").textContent.trim();
+                    let potencia_vlf = document.getElementById("potencia_vlf-value").textContent.trim();
+                    let potencia_lf = document.getElementById("potencia_lf-value").textContent.trim();
+                    let potencia_hf = document.getElementById("potencia_hf-value").textContent.trim();
+                    let potencia_total = document.getElementById("potencia_total-value").textContent.trim();
+                    let potencia_vlf_log = document.getElementById("potencia_hf_log-value").textContent.trim();
+                    let potencia_hf_log = document.getElementById("potencia_hf_log-value").textContent.trim();
+                    let potencia_lf_log = document.getElementById("potencia_lf_log-value").textContent.trim();
+                    let potencia_lf_nu = document.getElementById("potencia_lf_nu-value").textContent.trim();
+                    let potencia_hf_nu = document.getElementById("potencia_hf_nu-value").textContent.trim();
+                    let pico_vlf = document.getElementById("pico_vlf-value").textContent.trim();
+                    let pico_lf = document.getElementById("pico_lf-value").textContent.trim();
+                    let pico_hf = document.getElementById("pico_hf-value").textContent.trim();
+                    let lf_hf_ratio = document.getElementById("lf_hf_ratio-value").textContent.trim();
+
+                    document.getElementById('hidden_start').value = start;
+                    document.getElementById('hidden_end').value = end;
+                    document.getElementById('nni_mean').value = nni_mean;
+                    document.getElementById('nni_min').value = nni_min;
+                    document.getElementById('nni_max').value = nni_max;
+                    document.getElementById('hr_mean').value = hr_mean;
+                    document.getElementById('hr_min').value = hr_min;
+                    document.getElementById('hr_max').value = hr_max;
+                    document.getElementById('hr_std').value = hr_std;
+                    document.getElementById('nni_diff_mean').value = nni_diff_mean;
+                    document.getElementById('nni_diff_min').value = nni_diff_min;
+                    document.getElementById('nni_diff_max').value = nni_diff_max;
+                    document.getElementById('sdnn').value = sdnn;
+                    document.getElementById('sdann').value = sdann;
+                    document.getElementById('rmssd').value = rmssd;
+                    document.getElementById('sdsd').value = sdsd;
+                    document.getElementById('nn50').value = nn50;
+                    document.getElementById('pnn50').value = pnn50;
+                    document.getElementById('nn20').value = nn20;
+                    document.getElementById('rr_mean').value = rr_mean;
+                    document.getElementById('total_intervalos').value = total_intervalos;
+                    document.getElementById('potencia_vlf').value = potencia_vlf;
+                    document.getElementById('potencia_lf').value = potencia_lf;
+                    document.getElementById('potencia_hf').value = potencia_hf;
+                    document.getElementById('potencia_total').value = potencia_total;
+                    document.getElementById('potencia_vlf_log').value = potencia_vlf_log;
+                    document.getElementById('potencia_hf_log').value = potencia_hf_log;
+                    document.getElementById('potencia_lf_log').value = potencia_lf_log;
+                    document.getElementById('potencia_lf_nu').value = potencia_lf_nu;
+                    document.getElementById('potencia_hf_nu').value = potencia_hf_nu;
+                    document.getElementById('pico_vlf').value = pico_vlf;
+                    document.getElementById('pico_lf').value = pico_lf;
+                    document.getElementById('pico_hf').value = pico_hf;
+                    document.getElementById('lf_hf_ratio').value = lf_hf_ratio;
+
+                    console.log('Los valores son: ', start, end);
+                }
+
+            </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+        </main>
+    </div>
+
+    
+</body>
+
+</html>

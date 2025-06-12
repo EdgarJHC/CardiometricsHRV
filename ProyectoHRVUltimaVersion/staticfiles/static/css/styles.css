@@ -1,0 +1,11 @@
+/* Asegura que el contenedor principal ocupe al menos el alto completo de la pantalla */
+.main-wrapper {
+    display: flex;
+    flex-direction: column; /* Los hijos están organizados en columna */
+    min-height: 100vh; /* Mínimo alto del viewport */
+}
+
+/* Hace que el contenido principal ocupe todo el espacio disponible */
+main {
+    flex: 1; /* Se expande para ocupar el espacio sobrante */
+}

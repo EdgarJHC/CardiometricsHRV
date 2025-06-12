@@ -1,0 +1,109 @@
+/* Estilos generales */
+body {
+    background: linear-gradient(135deg, #d3973d, #e6f7ff); /* Fondo con un gradiente atractivo */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Contenedor principal del perfil */
+.perfil-container {
+    background-color: rgba(255, 255, 255, 0.9); /* Fondo blanco semi-transparente */
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    max-width: 1000px;
+    margin: 0 auto;
+    animation: fadeIn 1.5s ease-in-out;
+}
+
+
+/* Cabecera de perfil */
+.perfil-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.perfil-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 5px solid #004b69;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    animation: bounceIn 1s ease-out;
+}
+
+
+h1 {
+    text-align:center;
+    font-size: 30px;
+    color: #004b69;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+h3 {
+    text-align: center;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Tabla de información */
+.table-responsive {
+    margin-top: 40px;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 10px; /* Espaciado entre las filas */
+    animation: fadeInUp 1.5s ease-in-out;
+}
+
+.table th, .table td {
+    padding: 20px;
+    font-size: 16px;
+    text-align: left;
+}
+
+.table th {
+    background-color: #004b69;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    text-align: center;
+}
+
+.table tbody tr {
+    background-color: #ffffff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #f1faff;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.table td {
+    color: #555;
+}
+
+
+/* Animaciones */
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(30px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+    0% { transform: scale(0); opacity: 0; }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); opacity: 1; }
+}

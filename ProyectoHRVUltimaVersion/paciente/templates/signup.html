@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/stylesSignup.css' %}">
+<div class="container">
+  <h1>Registrar información</h1>
+
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form action="{% url 'signup' %}" method="POST">
+    {% csrf_token %}
+
+    <div class="container mt-5">
+
+      <!-- Nombre(s) -->
+      <div class="form-group">
+        <label for="nombres">Nombre(s):</label>
+        <input type="text" class="form-control" id="nombres" name="nombres" placeholder="Ingresa tu(s) nombre(s)" required>
+      </div>
+
+      <!-- Apellido Paterno -->
+      <div class="form-group">
+        <label for="apellido_paterno">Apellido Paterno:</label>
+        <input type="text" class="form-control" id="apellido_paterno" name="apellido_paterno" placeholder="Ingresa tu apellido paterno" required>
+      </div>
+
+      <!-- Apellido Materno -->
+      <div class="form-group">
+        <label for="apellido_materno">Apellido Materno:</label>
+        <input type="text" class="form-control" id="apellido_materno" name="apellido_materno" placeholder="Ingresa tu apellido materno" required>
+      </div>
+
+      <!-- Departamento -->
+      <div class="form-group">
+        <label for="departamento">Selecciona un departamento:</label>
+        <select class="form-select" id="departamento" name="departamento" required>
+            <option value="">Seleccione un departamento</option> <!-- Opción por defecto -->
+            {% for departamento in departamentos %}
+                <option value="{{ departamento.id_departamento }}">{{ departamento.departamento }}</option>
+            {% endfor %}
+        </select>
+        <small class="form-text text-muted">Selecciona un departamento.</small>
+      </div>
+
+      <!-- Teléfono -->
+      <div class="form-group">
+        <label for="telefono">Teléfono:</label>
+        <input type="text" class="form-control" id="telefono" name="telefono" placeholder="Ingresa tu número de teléfono" required pattern="\d{10}" title="Debe contener exactamente 10 dígitos" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '')">
+      </div>
+
+<!-- Correo Electrónico -->
+<div class="form-group">
+  <label for="correo">Correo Electrónico:</label>
+  <input type="email" class="form-control" id="correo" name="correo" placeholder="Ingresa tu correo electrónico" required oninput="validarCorreo()">
+  <small id="emailHelp" class="form-text text-muted">
+    El correo debe contener un `@` y ser un dominio permitido.
+  </small>
+  <div id="emailError" style="color: red; display: none;">
+    <small>Por favor, ingresa un correo electrónico válido.</small>
+  </div>
+</div>
+
+<!-- Confirmar Correo Electrónico -->
+<div class="form-group">
+  <label for="correo2">Confirmar Correo Electrónico:</label>
+  <input type="email" class="form-control" id="correo2" name="correo2" placeholder="Ingresa tu correo para confirmar" required oninput="validarCorreo()">
+  <small id="correoError" class="text-danger"></small>
+</div>
+
+
+
+<script>
+  function validarCorreo() {
+    var email = document.getElementById("correo").value;
+    var email2 = document.getElementById("correo2").value;
+    var emailError = document.getElementById("emailError");
+    var correoError = document.getElementById("correoError");
+    var submitBtn = document.getElementById("submitBtn");
+
+    // Expresión regular para validar correos electrónicos permitidos
+    var regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|yahoo\.com|gob\.mx|hotmail\.mx)$/;
+
+    // Validar formato del correo principal
+    var correoValido = regex.test(email);
+    if (!correoValido) {
+      emailError.style.display = "block";
+    } else {
+      emailError.style.display = "none";
+    }
+
+    // Validar que los correos coincidan
+    if (email !== email2 || email2 === "") {
+      correoError.textContent = "Los correos electrónicos no coinciden";
+    } else {
+      correoError.textContent = "";
+    }
+
+    // Habilitar o deshabilitar el botón de envío
+    submitBtn.disabled = !(correoValido && email === email2);
+  }
+</script>
+
+
+      <!-- Fecha de nacimiento -->
+      <div class="form-group">
+        <label for="fecha_nacimiento">Fecha de nacimiento:</label>
+        <input type="date" class="form-date" id="fecha_nacimiento" name="fecha_nacimiento" placeholder="Ingresa tu fecha de nacimiento" required>
+        <small id="edadError" class="form-text text-danger" style="display:none;">Debes ser mayor de 18 años.</small>
+    </div>
+
+
+       <script>
+        document.getElementById('fecha_nacimiento').addEventListener('change', function() {
+            var fechaNacimiento = new Date(this.value);
+            var fechaHoy = new Date();
+            var edad = fechaHoy.getFullYear() - fechaNacimiento.getFullYear()
+            var mes = fechaHoy.getMonth() - fechaNacimiento.getMonth();
+    
+            // Si la fecha de nacimiento aún no ha cumplido 18 años
+            if (mes < 0 || (mes === 0 && fechaHoy.getDate() < fechaNacimiento.getDate())) {
+                edad--;
+            }
+    
+            // Mostrar el mensaje si la edad es menor a 18
+            if (edad < 18) {
+                document.getElementById('edadError').style.display = 'block';
+                document.getElementById('fecha_nacimiento').setCustomValidity('Debes ser mayor de 18 años');
+            } else {
+                document.getElementById('edadError').style.display = 'none';
+                document.getElementById('fecha_nacimiento').setCustomValidity('');
+            }
+        });
+    </script>
+
+      <!--Especialidad -->
+      <div class="form-group">
+        <label for="especialidad">Especialidad:</label>
+        <input type="text" class="form-control" id="especialidad" name="especialidad" placeholder="Ingresa tu especialidad" required>
+      </div>
+
+      <!-- Usuario tener un control sin que tenga espacios -->
+      <div class="form-group">
+        <label for="username">Usuario:</label>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Ingresa tu nombre de usuario" required>
+      </div>
+
+      <!-- Contraseña -->
+      <div class="form-group">
+        <label for="password1">Contraseña:</label>
+        <input type="password" class="form-control" id="password1" name="password1" placeholder="Ingresa tu contraseña" required
+               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!*]).{8,}" oninput="validarContrasena()">
+        <small class="form-text text-muted">Debe contener al menos 8 caracteres, minúsculas, mayusculas, un número y un carácter especial</small>
+      </div>
+
+      <!-- Confirmar Contraseña -->
+      <div class="form-group">
+        <label for="password2">Confirmar Contraseña:</label>
+       <!-- Confirmar Contraseña  <input> con id="password2". ahi es la variable que se manda al funcón de js --> 
+        <input type="password" class="form-control" id="password2" name="password2" placeholder="Ingresa tu contraseña para confirmar" required oninput="validarContrasena()">
+        <small id="passwordError" class="text-danger"></small>
+      </div>
+
+      <script>
+        function validarContrasena() {
+          var pass1 = document.getElementById("password1").value;
+          var pass2 = document.getElementById("password2").value;
+          var errorMsg = document.getElementById("passwordError");
+          var submitBtn = document.getElementById("submitBtn");
+      
+          if (pass1 !== pass2) {
+            errorMsg.textContent = "Las contraseñas no coinciden";
+            submitBtn.disabled = true; // Desactiva el botón para evitar el envío
+          } else {
+            errorMsg.textContent = "";
+            submitBtn.disabled = false; // Activa el botón cuando las contraseñas coincidan
+          }
+        }
+      </script>
+
+
+
+
+<script>
+  function validarCorreo() {
+    var email = document.getElementById("correo").value;
+    var email2 = document.getElementById("correo2").value;
+    var emailError = document.getElementById("emailError");
+    var correoError = document.getElementById("correoError");
+    var submitBtn = document.getElementById("submitBtn");
+
+    // Expresión regular para validar correos electrónicos permitidos
+    var regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|outlook\.com|yahoo\.com|gob\.mx|hotmail\.mx)$/;
+
+    // Validar formato del correo principal
+    var correoValido = regex.test(email);
+    if (!correoValido) {
+      emailError.style.display = "block";
+    } else {
+      emailError.style.display = "none";
+    }
+
+    // Validar que los correos coincidan
+    if (email !== email2 || email2 === "") {
+      correoError.textContent = "Los correos electrónicos no coinciden";
+    } else {
+      correoError.textContent = "";
+    }
+
+    // Habilitar o deshabilitar el botón de envío
+    submitBtn.disabled = !(correoValido && email === email2);
+  }
+</script>
+
+    </div>
+
+    <!--<button type="submit" class="btn btn-primary mt-3" id="submitBtn" >Confirmar</button>-->
+    <!-- Botón de envío -->
+    <button type="submit" id="submitBtn" class="btn btn-primary mt-3" disabled>Confirmar</button>
+  </form>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplicación web de HRV</title>
+    
+    {% load static %}
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    
+   
+
+    <!-- Meta etiquetas -->
+    <meta name="description" content="Descripción de la aplicación web de HRV.">
+    <meta name="keywords" content="HRV, salud, bienestar, monitorización">
+    <meta name="author" content="Tu Nombre">
+</head>
+
+<body>
+    <div class="main-wrapper d-flex flex-column min-vh-100"> <!-- Contenedor principal -->
+        {% include '_navbar.html' %} <!-- Barra de navegación -->
+        
+        <main class="flex-fill"> <!-- Contenido principal -->
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer>
+        {% include 'footer.html' %} <!-- Pie de página -->
+        </footer>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

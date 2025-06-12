@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles_paciente.css' %}">
+
+<h1>Registros de Pacientes</h1>
+
+
+<div class="card">
+  <div class="card-header">    
+    <form class="nav-item" method="GET" action="{% url 'pacientes' %}">
+      <input class="form-control mr-sm-2" type="text" placeholder="Buscar Paciente" name="query" aria-label="Buscar">
+      <button class="btn" type="submit" style="background-color: #004b69; color: white;">Buscar</button>
+  </form>
+  
+
+  <!-- Botón para crear nuevo paciente -->
+  <hr>
+  <a class="btn" href="{% url 'create_paciente' %}" role="button" style="background-color: #39baed; color: white;">Nuevo Paciente</a>
+</div>
+ 
+    </div>
+ 
+
+
+<table class="table table-striped mt-3">
+  <thead>
+      <tr>
+          <th>ID</th>
+          <th>Nombre(s)</th>
+          <th>Apellido Paterno</th>
+          <th>Apellido Materno</th>
+          <th>Género</th>
+          <th>Uso de Medicamentos</th>
+          <th>Actividad Física</th>
+          <th>Teléfono</th>
+          <th>Correo Electrónico</th>
+          <th>Fecha de Nacimiento</th>
+          <th>IMC</th>
+          <th>Acciones</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% for paciente in pacientes %}
+          <tr>
+              <td>{{ paciente.id_paciente }}</td>
+              <td>{{ paciente.nombre_paciente }}</td>
+              <td>{{ paciente.apellido_paterno }}</td>
+              <td>{{ paciente.apellido_materno }}</td>
+              <td>{{ paciente.sexo }}</td>
+              <td>{{ paciente.uso_de_medicamentos }}</td>
+              <td>{{ paciente.actividad_fisica }}</td>
+              <td>{{ paciente.telefono }}</td>
+              <td>{{ paciente.correo }}</td>
+              <td>{{ paciente.fecha_nacimiento|date:'j M Y' }}</td>
+              <td>{{ paciente.imc }}</td>
+              <td>
+                  <a class="btn btn-info" href="{% url 'editar_paciente' paciente.id_paciente %}">Editar</a>
+                  <a class="btn btn-warning" href="{% url 'historial' paciente.id_paciente %}">Expediente</a>
+                  <a class="btn btn-danger" href="{% url 'eliminar_paciente' paciente.id_paciente %}" onclick="return confirm('¿Estás seguro de eliminar este registro?')">Borrar</a>
+
+
+                </td>
+          </tr>
+      {% endfor %}
+  </tbody>
+</table>
+
+
+
+
+
+
+{% endblock %}

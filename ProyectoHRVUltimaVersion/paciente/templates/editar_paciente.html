@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block titulo %} Editar Paciente {% endblock %}
+
+{% block content %}
+{% load static %}
+
+<!-- Enlace a la hoja de estilos personalizada -->
+<link rel="stylesheet" type="text/css" href="{% static 'css/editar_paciente.css' %}">
+
+<style>
+    body{ 
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+                url("{% static 'img/medicina.jpg' %}") no-repeat center center fixed;
+    background-size: cover;
+    height: 100vh;
+    animation: fadeIn 1.5s ease-out; /* Animación de desvanecimiento */
+    
+}
+
+/* Animación de desvanecimiento */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+    </style>
+    <div class="card-header text-center ">
+        <H1>Editar información del paciente</H1>
+    </div>
+
+<div class="container">
+    <div class="card shadow-lg">
+
+        <div class="card-body">
+            
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-submit">Guardar cambios</button>
+            </form>
+        </div>
+        <div class="card-footer text-muted text-center">
+            Los datos ingresados son de exclusiva responsabilidad del especialista a cargo.
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endblock %}

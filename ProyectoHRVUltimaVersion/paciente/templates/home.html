@@ -1,0 +1,46 @@
+{% extends 'base.html' %}  <!-- Extiende la plantilla base.html para reutilizar su estructura y estilo -->
+
+{% block content %}  <!-- Inicia el bloque de contenido que se insertará en la plantilla base -->
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/home.css' %}">
+
+
+<!-- Hero Section -->
+<div class="hero-section" >  <!-- Sección principal de bienvenida -->
+    <h1>Bienvenido a la Aplicación de análisis de la VFC</h1>  <!-- Título principal de la aplicación -->
+    <p>Soluciones tecnológicas para médicos y pacientes en el área de cardiología.</p>  <!-- Descripción breve de la aplicación -->
+</div>
+
+<!-- Content Section -->
+<div class="container content">  <!-- Sección de contenido principal dentro de un contenedor -->
+    <div class="row">  <!-- Inicia una fila para organizar las columnas -->
+        <!-- Card 1 -->
+        <div class="col-md-4">  <!-- Columna que ocupa 4 de 12 espacios en dispositivos medianos y más grandes -->
+            <div class="card">  <!-- Inicia una tarjeta que contiene información -->
+                <img src="{% static 'img/tarjeta1.jpg' %}" class="card-img-top" alt="Card Image 1">  <!-- Imagen de la tarjeta -->
+                <div class="card-body">  <!-- Cuerpo de la tarjeta -->
+                    <h5 class="card-title">Servicio para Médicos</h5>  <!-- Título de la tarjeta -->
+                    <p class="card-text">Servicio creado para médicos, especialista, donde llevaran un control de sus pacientes, al igual quepoder mantener un trato adecuado con ellos.</p>  <!-- Descripción de la tarjeta -->
+                    <a href="{% url 'signup' %}" class="btn btn-primary">Registrarse</a>  <!-- Botón que lleva a más información -->
+                    <a href="{% url 'signin' %}" class="btn btn-primary">Iniciar Sesión</a>  <!-- Botón que lleva a más información -->
+                </div>
+            </div>
+        </div>
+       
+        <!-- Card 3 -->
+        <div class="col-md-4">  <!-- Columna para la tercera tarjeta -->
+            <div class="card">  <!-- Inicia la tercera tarjeta -->
+                <img src="{% static 'img/tarjeta2.jpg' %}" class="card-img-top" alt="Card Image 2">       
+                    <div class="card-body">  <!-- Cuerpo de la tercera tarjeta -->
+                    <h5 class="card-title">Más información</h5>  <!-- Título de la tercera tarjeta -->
+                    <p class="card-text">Para cualquier pregunta o duda, precionar en leer más.</p>  <!-- Descripción de la tercera tarjeta -->
+                    <a href="#" class="btn btn-primary">Leer más</a>  <!-- Botón que lleva a más información sobre la tercera tarjeta -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}  <!-- Finaliza el bloque de contenido -->

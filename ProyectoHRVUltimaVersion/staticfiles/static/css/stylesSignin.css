@@ -1,0 +1,55 @@
+.login-container {
+    background-color: #f8f9fa; /* Color de fondo del contenedor */
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px; /* Ancho del formulario */
+    margin: 50px auto; /* Centrar horizontalmente */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra para dar un efecto de profundidad */
+    text-align: center; /* Centrar el texto */
+  }
+  
+  .login-container h1 {
+    margin-bottom: 20px;
+    font-size: 2em;
+    color: #333; /* Color del texto del título */
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555; /* Color del texto de las etiquetas */
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1em;
+  }
+  
+  .login-button {
+    background-color: #007bff; /* Color del botón */
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3; /* Color del botón al pasar el ratón por encima */
+  }
+  
+  @media (max-width: 600px) {
+    .login-container {
+      width: 90%; /* Ajuste del ancho para pantallas más pequeñas */
+    }
+  }
+  
